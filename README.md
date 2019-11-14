@@ -1,6 +1,6 @@
 # Submarino
 CG
-Alunos: '\n'
+Alunos: 
 	- Caio O. H. Henrici : 92558
 	- Rodrigo E. O. B. Chichorro:
 
