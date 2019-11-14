@@ -46,7 +46,7 @@ double esque,direi = 0;
 double PosX, PosZ = 0;
 double PosY = 0.0;
 double Rot = 0.0;
-double radius = 6.0;
+double radius = 7.5;
 
 //vertices do cubo
 GLfloat vertices[8][3] = { {-1.0,-1.0,1.0},{-1.0,1.0,1.0},{1.0,1.0,1.0},{1.0,-1.0,1.0},
@@ -135,16 +135,17 @@ void texto(string s,float x,float y,float z) //func de texto usando bitmap
 }
 
 void desenha_menu () {
-	texto("                          Menu de Comandos                   ", center[0] + 4*viewVector[0], 24+center[1]/1.98, viewVector[2] + center[2]/2.01);
-	texto("Up (tecla direcional)     | Mover (verticalmente) para cima ", center[0] + 4*viewVector[0], 23.9+center[1]/1.98, 2*viewVector[2] + center[2]/2.01);
-	texto("Down (tecla direcional)   | Mover (verticalmente) para baixo", center[0] + 4*viewVector[0], 23.7+center[1]/1.98, 1.95*viewVector[2]+center[2]/2.01);
-    texto("Left (tecla direcional)   | Virar (aproximadamente) 5o para a direita", center[0] + 4*viewVector[0], 23.5+center[1]/1.98, 1.93*viewVector[2]+center[2]/2.01);
-    texto("Right (tecla direcional)  | Virar (aproximadamente) 5o para a esquerda", center[0] + 4*viewVector[0], 23.3+center[1]/1.98, 1.90*viewVector[2]+center[2]/2.01);
-    texto("W ou w                    | Ir para a frente", center[0] + 4*viewVector[0], 23.1+center[1]/1.98, 1.85*viewVector[2]+center[2]/2.01);
-	texto("S ou s                    | Re", center[0] + 4*viewVector[0], 22.9+center[1]/1.98, 1.82*viewVector[2]+center[2]/2.01);
-	texto("F ou f                    | Ponto de vista de fora do submarino", center[0] + 4*viewVector[0], 22.7+center[1]/1.98, 1.79*viewVector[2]+center[2]/2.01);
-	texto("I ou i                    | Ponto de vista de dentro do submarino", center[0] + 4*viewVector[0], 22.5+center[1]/1.98, 1.75*viewVector[2]+center[2]/2.01);
-	texto("H ou h                    | Apresentar/Ocultar um menu de ajuda", center[0] + 4*viewVector[0], 22.3+center[1]/1.98, 1.72*viewVector[2]+center[2]/2.01); 
+    double d = 13.0*viewVector[2]/3.73, e = -13.0*viewVector[0]/3.73;
+	texto("                    Menu de Comandos                   "                 , center[0] + 3.73*viewVector[0] + d, 5.0 + center[1], center[2] + 3.73*viewVector[2] + e);
+	texto("Up (tecla direcional)     | Mover (verticalmente) para cima "            , center[0] + 3.73*viewVector[0] + d, 4.7 + center[1], center[2] + 3.73*viewVector[2] + e);
+	texto("Down (tecla direcional)   | Mover (verticalmente) para baixo"            , center[0] + 3.73*viewVector[0] + d, 4.4 + center[1], center[2] + 3.73*viewVector[2] + e);
+    texto("Left (tecla direcional)   | Virar (aproximadamente) 5o para a direita"   , center[0] + 3.73*viewVector[0] + d, 4.1 + center[1], center[2] + 3.73*viewVector[2] + e);
+    texto("Right (tecla direcional)  | Virar (aproximadamente) 5o para a esquerda"  , center[0] + 3.73*viewVector[0] + d, 3.8 + center[1], center[2] + 3.73*viewVector[2] + e);
+    texto("W ou w                    | Ir para a frente"                            , center[0] + 3.73*viewVector[0] + d, 3.5 + center[1], center[2] + 3.73*viewVector[2] + e);
+	texto("S ou s                    | Re"                                          , center[0] + 3.73*viewVector[0] + d, 3.2 + center[1], center[2] + 3.73*viewVector[2] + e);
+	texto("F ou f                    | Ponto de vista de fora do submarino"         , center[0] + 3.73*viewVector[0] + d, 2.9 + center[1], center[2] + 3.73*viewVector[2] + e);
+	texto("I ou i                    | Ponto de vista de dentro do submarino"       , center[0] + 3.73*viewVector[0] + d, 2.6 + center[1], center[2] + 3.73*viewVector[2] + e);
+	texto("H ou h                    | Apresentar/Ocultar um menu de ajuda"         , center[0] + 3.73*viewVector[0] + d, 2.3 + center[1], center[2] + 3.73*viewVector[2] + e); 
 }
 
 void desenha_menu2 () {
