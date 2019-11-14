@@ -134,32 +134,35 @@ void texto(string s,float x,float y,float z) //func de texto usando bitmap
 	}
 }
 
-// void desenha_menu () {
-// 	texto("                          Menu de Comandos                   ",4,24+center[1]/1.98,1+center[0]/2.01);
-// 	texto("Up (tecla direcional)     | Mover (verticalmente) para cima ", 4,23.9+center[1]/1.98,2+movX/2.01);
-// 	texto("Down (tecla direcional)   | Mover (verticalmente) para baixo",4+movZ,23.7+center[1]/1.98,1.95+movX/2.01);
-//     texto("Left (tecla direcional)   | Virar (aproximadamente) 5o para a direita",4+movZ,23.5+center[1]/1.98,1.93+movX/2.01);
-//     texto("Right (tecla direcional)  | Virar (aproximadamente) 5o para a esquerda",4+movZ,23.3+center[1]/1.98,1.90+movX/2.01);
-//     texto("W ou w                    | Ir para a frente",4+movZ,23.1+center[1]/1.98,1.85+movX/2.01);
-// 	texto("S ou s                    | Re",4+movZ,22.9+center[1]/1.98,1.82+movX/2.01);
-// 	texto("F ou f                    | Ponto de vista de fora do submarino",4+movZ,22.7+center[1]/1.98,1.79+movX/2.01);
-// 	texto("I ou i                    | Ponto de vista de dentro do submarino",4+movZ,22.5+center[1]/1.98,1.75+movX/2.01);
-// 	texto("H ou h                    | Apresentar/Ocultar um menu de ajuda",4+movZ,22.3+center[1]/1.98,1.72+movX/2.01); 
-// }
+void desenha_menu () {
+	texto("                          Menu de Comandos                   ", center[0] + 4*viewVector[0], 24+center[1]/1.98, viewVector[2] + center[2]/2.01);
+	texto("Up (tecla direcional)     | Mover (verticalmente) para cima ", center[0] + 4*viewVector[0], 23.9+center[1]/1.98, 2*viewVector[2] + center[2]/2.01);
+	texto("Down (tecla direcional)   | Mover (verticalmente) para baixo", center[0] + 4*viewVector[0], 23.7+center[1]/1.98, 1.95*viewVector[2]+center[2]/2.01);
+    texto("Left (tecla direcional)   | Virar (aproximadamente) 5o para a direita", center[0] + 4*viewVector[0], 23.5+center[1]/1.98, 1.93*viewVector[2]+center[2]/2.01);
+    texto("Right (tecla direcional)  | Virar (aproximadamente) 5o para a esquerda", center[0] + 4*viewVector[0], 23.3+center[1]/1.98, 1.90*viewVector[2]+center[2]/2.01);
+    texto("W ou w                    | Ir para a frente", center[0] + 4*viewVector[0], 23.1+center[1]/1.98, 1.85*viewVector[2]+center[2]/2.01);
+	texto("S ou s                    | Re", center[0] + 4*viewVector[0], 22.9+center[1]/1.98, 1.82*viewVector[2]+center[2]/2.01);
+	texto("F ou f                    | Ponto de vista de fora do submarino", center[0] + 4*viewVector[0], 22.7+center[1]/1.98, 1.79*viewVector[2]+center[2]/2.01);
+	texto("I ou i                    | Ponto de vista de dentro do submarino", center[0] + 4*viewVector[0], 22.5+center[1]/1.98, 1.75*viewVector[2]+center[2]/2.01);
+	texto("H ou h                    | Apresentar/Ocultar um menu de ajuda", center[0] + 4*viewVector[0], 22.3+center[1]/1.98, 1.72*viewVector[2]+center[2]/2.01); 
+}
 
-// void desenha_menu2 () {
-// 	glTranslatef(-2,-1,0);
-// 	texto("                     Menu de Comandos                   ",4,24+center[1]/2.003,2.01+movX/2.010);
-// 	texto("Up (tecla direcional)     | Mover (verticalmente) para cima ", 4,23.9+center[1]/2.003,2.02+movX/2.010);
-// 	texto("Down (tecla direcional)   | Mover (verticalmente) para baixo",4+movZ,23.8+center[1]/2.003,2.03+movX/2.010);
-//     texto("Left (tecla direcional)   | Virar (aproximadamente) 5o para a direita",4+movZ,23.7+center[1]/2.003,2.04+movX/2.010);
-//     texto("Right (tecla direcional)  | Virar (aproximadamente) 5o para a esquerda",4+movZ,23.6+center[1]/2.003,2.05+movX/2.010);
-//     texto("W ou w                    | Ir para a frente",4+movZ,23.5+center[1]/2.003,2.06+movX/2.010);
-// 	texto("S ou s                    | Re",4+movZ,23.4+center[1]/2.003,2.07+movX/2.010);
-// 	texto("F ou f                    | Ponto de vista de fora do submarino",4+movZ,23.3+center[1]/2.003,2.08+movX/2.010);
-// 	texto("I ou i                    | Ponto de vista de dentro do submarino",4+movZ,23.2+center[1]/2.003,2.09+movX/2.010);
-// 	texto("H ou h                    | Apresentar/Ocultar um menu de ajuda",4+movZ,23.1+center[1]/2.003,2.1+movX/2.010); 
-// }
+void desenha_menu2 () {
+    cerr << "aaa\n";
+    // center[0]+2.73*viewVector[0], center[1]+1.5, center[2]+2.73*viewVector[2],
+    
+    double d = 2.2*viewVector[2]/3.73, e = -2.2*viewVector[0]/3.73;
+	texto("                     Menu de Comandos                   "                , center[0] + 3.73*viewVector[0] + d, 2.0 + center[1], center[2] + 3.73*viewVector[2] + e);
+	texto("Up (tecla direcional)     | Mover (verticalmente) para cima "            , center[0] + 3.73*viewVector[0] + d, 1.9 + center[1], center[2] + 3.73*viewVector[2] + e);
+	texto("Down (tecla direcional)   | Mover (verticalmente) para baixo"            , center[0] + 3.73*viewVector[0] + d, 1.8 + center[1], center[2] + 3.73*viewVector[2] + e);
+    texto("Left (tecla direcional)   | Virar (aproximadamente) 5o para a direita"   , center[0] + 3.73*viewVector[0] + d, 1.7 + center[1], center[2] + 3.73*viewVector[2] + e);
+    texto("Right (tecla direcional)  | Virar (aproximadamente) 5o para a esquerda"  , center[0] + 3.73*viewVector[0] + d, 1.6 + center[1], center[2] + 3.73*viewVector[2] + e);
+    texto("W ou w                    | Ir para a frente"                            , center[0] + 3.73*viewVector[0] + d, 1.5 + center[1], center[2] + 3.73*viewVector[2] + e);
+	texto("S ou s                    | Re"                                          , center[0] + 3.73*viewVector[0] + d, 1.4 + center[1], center[2] + 3.73*viewVector[2] + e);
+	texto("F ou f                    | Ponto de vista de fora do submarino"         , center[0] + 3.73*viewVector[0] + d, 1.3 + center[1], center[2] + 3.73*viewVector[2] + e);
+	texto("I ou i                    | Ponto de vista de dentro do submarino"       , center[0] + 3.73*viewVector[0] + d, 1.2 + center[1], center[2] + 3.73*viewVector[2] + e);
+	texto("H ou h                    | Apresentar/Ocultar um menu de ajuda"         , center[0] + 3.73*viewVector[0] + d, 1.1 + center[1], center[2] + 3.73*viewVector[2] + e); 
+}
 
 void quad(int a, int b, int c, int d, int ncolor) {
     glColor4f(0,0,1,0.8);
@@ -427,10 +430,10 @@ void display(void) {
     glScalef(2,2,2);
     */
     colorcube(); //desenha o cubo
-    // if (showmenu && POV==1) 
-	// 	desenha_menu();
-	// else if  (showmenu && POV==0) 
-	// 	desenha_menu2();
+    if(showmenu && POV==1) 
+		desenha_menu();
+	else if(showmenu && POV==0) 
+		desenha_menu2();
     glFlush();
     glutSwapBuffers(); //usando double buffer (para evitar 'flicker')
 }
