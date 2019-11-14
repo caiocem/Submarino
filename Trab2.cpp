@@ -64,7 +64,7 @@ double animaNavio,animaCardume,animaJetski,animaTorpedo = 0;
 bool animaNavioAux, animaCardumeAux, inverteCardume, torpedo = false;
 
 //posicao do observador (camera)
-double POV = 1;
+bool POV = 1;
 GLdouble center[] = {0.0, 0.0, 0.0};
 GLdouble viewer[] = {-1*radius, 0.0, 0.0};
 GLdouble viewVector[] = {1.0, 0.0, 0.0};
@@ -325,17 +325,20 @@ void display(void) {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //limpa a janela
     glLoadIdentity();
 
-    if (POV == 1) //POV outside
+    if (POV) //POV outside
         // gluLookAt(0.0,0.0,8.0, // define posicao do observador
 		// 0.0,20.0,0.0,                                   // ponto de interesse (foco)
 		// 0.0, 1.0, 0.0);  
         gluLookAt(viewer[0],viewer[1], viewer[2], // define posicao do observador
 		center[0], center[1], center[2],                                   // ponto de interesse (foco)
 		0.0, 1.0, 0.0);                                                    
-	else if (POV == 0) //POV inside
-		gluLookAt(-1.5+viewer[0]-10-PosX/6.7,viewer[1]-1.7+PosY/6.65,viewer[2]+PosZ, // define posicao do observador
-		-2.5-PosX/6.6, 6.5+PosY/6.7, 0.0+PosZ,                                 // ponto de interesse (foco)
-		0.0, 1.0, 0.0);   		 // vetor de "view up"
+	else //POV inside
+        gluLookAt(viewer[0]+(radius+2.23)*viewVector[0],viewer[1]+1.5, viewer[2]+(radius+2.23)*viewVector[2], // define posicao do observador
+		center[0]+2.73*viewVector[0], center[1]+1.5, center[2]+2.73*viewVector[2],                                   // ponto de interesse (foco)
+		0.0, 1.0, 0.0);
+		// gluLookAt(-1.5+viewer[0]-10-PosX/6.7,viewer[1]-1.7+PosY/6.65,viewer[2]+PosZ, // define posicao do observador
+		// -2.5-PosX/6.6, 6.5+PosY/6.7, 0.0+PosZ,                                 // ponto de interesse (foco)
+		// 0.0, 1.0, 0.0);   		 // vetor de "view up"
 	// glRotatef(-90,0,1,0);
     // glScalef(0.3,0.3,0.3);
     // glPushMatrix(); {
@@ -352,9 +355,6 @@ void display(void) {
     glRotatef(90,0,1,0);
     glTranslated(-1*center[0], -1*center[1], -1*center[2]);
     glTranslated(center[0], center[1], center[2]);
-    
-    // cerr << center[0] << "," << center[0] << "," << center[0] << " " << " " << Rot << " viewer: ";
-    // cerr << viewer[0] << "," << viewer[1] << "," << viewer[2] << endl;
 
     Parser("models/submarino.obj", 0); //0 = sem cor
     glPopMatrix();	
