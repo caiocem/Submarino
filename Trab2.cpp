@@ -42,13 +42,17 @@ int largurajanela = 900, alturajanela = 600;
 //teclas
 bool baixo,cima,esq,dir,frente,tras = false;
 //movimento
-double movY,esque,direi,movX,Rot,movZ = 0;
-double PosX, PosZ, PosY = 0;
+double esque,direi = 0;
+double PosX, PosZ = 0;
+double PosY = 0.0;
+double Rot = 0.0;
+double radius = 6.0;
+
 //vertices do cubo
 GLfloat vertices[8][3] = { {-1.0,-1.0,1.0},{-1.0,1.0,1.0},{1.0,1.0,1.0},{1.0,-1.0,1.0},
 {-1.0,-1.0,-1.0},{-1.0,1.0,-1.0},{1.0,1.0,-1.0},{1.0,-1.0,-1.0} };
 //limitantes
-double chao = -72.5;
+double chao = -72;
 double paredeFrente = 36;
 double paredeTras = -paredeFrente; 
 //cor de cada face do cubo  , 6=marrom, 0=preto,4=azul, 7=amarelo, 3=laranja
@@ -58,9 +62,12 @@ GLfloat colors[8][4] = { {0.0,0.0,0.0,0.8} , {1.0,0.0,0.0,0.8}, {1.0,1.0,0.0,0.8
 //Vars de "animacao"
 double animaNavio,animaCardume,animaJetski,animaTorpedo = 0;
 bool animaNavioAux, animaCardumeAux, inverteCardume, torpedo = false;
+
 //posicao do observador (camera)
 double POV = 1;
-GLdouble viewer[] = {12.0, 8.0, 0.0};
+GLdouble center[] = {0.0, 0.0, 0.0};
+GLdouble viewer[] = {-1*radius, 0.0, 0.0};
+GLdouble viewVector[] = {1.0, 0.0, 0.0};
 
 // desenha uma face do cubo
 // a, b, c e d sao indices no vetor de vertices
@@ -127,32 +134,32 @@ void texto(string s,float x,float y,float z) //func de texto usando bitmap
 	}
 }
 
-void desenha_menu () {
-	texto("                          Menu de Comandos                   ",4,24+movY/1.98,1+movX/2.01);
-	texto("Up (tecla direcional)     | Mover (verticalmente) para cima ", 4,23.9+movY/1.98,2+movX/2.01);
-	texto("Down (tecla direcional)   | Mover (verticalmente) para baixo",4+movZ,23.7+movY/1.98,1.95+movX/2.01);
-    texto("Left (tecla direcional)   | Virar (aproximadamente) 5o para a direita",4+movZ,23.5+movY/1.98,1.93+movX/2.01);
-    texto("Right (tecla direcional)  | Virar (aproximadamente) 5o para a esquerda",4+movZ,23.3+movY/1.98,1.90+movX/2.01);
-    texto("W ou w                    | Ir para a frente",4+movZ,23.1+movY/1.98,1.85+movX/2.01);
-	texto("S ou s                    | Re",4+movZ,22.9+movY/1.98,1.82+movX/2.01);
-	texto("F ou f                    | Ponto de vista de fora do submarino",4+movZ,22.7+movY/1.98,1.79+movX/2.01);
-	texto("I ou i                    | Ponto de vista de dentro do submarino",4+movZ,22.5+movY/1.98,1.75+movX/2.01);
-	texto("H ou h                    | Apresentar/Ocultar um menu de ajuda",4+movZ,22.3+movY/1.98,1.72+movX/2.01); 
-}
+// void desenha_menu () {
+// 	texto("                          Menu de Comandos                   ",4,24+movY/1.98,1+movX/2.01);
+// 	texto("Up (tecla direcional)     | Mover (verticalmente) para cima ", 4,23.9+movY/1.98,2+movX/2.01);
+// 	texto("Down (tecla direcional)   | Mover (verticalmente) para baixo",4+movZ,23.7+movY/1.98,1.95+movX/2.01);
+//     texto("Left (tecla direcional)   | Virar (aproximadamente) 5o para a direita",4+movZ,23.5+movY/1.98,1.93+movX/2.01);
+//     texto("Right (tecla direcional)  | Virar (aproximadamente) 5o para a esquerda",4+movZ,23.3+movY/1.98,1.90+movX/2.01);
+//     texto("W ou w                    | Ir para a frente",4+movZ,23.1+movY/1.98,1.85+movX/2.01);
+// 	texto("S ou s                    | Re",4+movZ,22.9+movY/1.98,1.82+movX/2.01);
+// 	texto("F ou f                    | Ponto de vista de fora do submarino",4+movZ,22.7+movY/1.98,1.79+movX/2.01);
+// 	texto("I ou i                    | Ponto de vista de dentro do submarino",4+movZ,22.5+movY/1.98,1.75+movX/2.01);
+// 	texto("H ou h                    | Apresentar/Ocultar um menu de ajuda",4+movZ,22.3+movY/1.98,1.72+movX/2.01); 
+// }
 
-void desenha_menu2 () {
-	glTranslatef(-2,-1,0);
-	texto("                     Menu de Comandos                   ",4,24+movY/2.003,2.01+movX/2.010);
-	texto("Up (tecla direcional)     | Mover (verticalmente) para cima ", 4,23.9+movY/2.003,2.02+movX/2.010);
-	texto("Down (tecla direcional)   | Mover (verticalmente) para baixo",4+movZ,23.8+movY/2.003,2.03+movX/2.010);
-    texto("Left (tecla direcional)   | Virar (aproximadamente) 5o para a direita",4+movZ,23.7+movY/2.003,2.04+movX/2.010);
-    texto("Right (tecla direcional)  | Virar (aproximadamente) 5o para a esquerda",4+movZ,23.6+movY/2.003,2.05+movX/2.010);
-    texto("W ou w                    | Ir para a frente",4+movZ,23.5+movY/2.003,2.06+movX/2.010);
-	texto("S ou s                    | Re",4+movZ,23.4+movY/2.003,2.07+movX/2.010);
-	texto("F ou f                    | Ponto de vista de fora do submarino",4+movZ,23.3+movY/2.003,2.08+movX/2.010);
-	texto("I ou i                    | Ponto de vista de dentro do submarino",4+movZ,23.2+movY/2.003,2.09+movX/2.010);
-	texto("H ou h                    | Apresentar/Ocultar um menu de ajuda",4+movZ,23.1+movY/2.003,2.1+movX/2.010); 
-}
+// void desenha_menu2 () {
+// 	glTranslatef(-2,-1,0);
+// 	texto("                     Menu de Comandos                   ",4,24+movY/2.003,2.01+movX/2.010);
+// 	texto("Up (tecla direcional)     | Mover (verticalmente) para cima ", 4,23.9+movY/2.003,2.02+movX/2.010);
+// 	texto("Down (tecla direcional)   | Mover (verticalmente) para baixo",4+movZ,23.8+movY/2.003,2.03+movX/2.010);
+//     texto("Left (tecla direcional)   | Virar (aproximadamente) 5o para a direita",4+movZ,23.7+movY/2.003,2.04+movX/2.010);
+//     texto("Right (tecla direcional)  | Virar (aproximadamente) 5o para a esquerda",4+movZ,23.6+movY/2.003,2.05+movX/2.010);
+//     texto("W ou w                    | Ir para a frente",4+movZ,23.5+movY/2.003,2.06+movX/2.010);
+// 	texto("S ou s                    | Re",4+movZ,23.4+movY/2.003,2.07+movX/2.010);
+// 	texto("F ou f                    | Ponto de vista de fora do submarino",4+movZ,23.3+movY/2.003,2.08+movX/2.010);
+// 	texto("I ou i                    | Ponto de vista de dentro do submarino",4+movZ,23.2+movY/2.003,2.09+movX/2.010);
+// 	texto("H ou h                    | Apresentar/Ocultar um menu de ajuda",4+movZ,23.1+movY/2.003,2.1+movX/2.010); 
+// }
 
 void quad(int a, int b, int c, int d, int ncolor) {
     glColor4f(0,0,1,0.8);
@@ -168,8 +175,10 @@ void quad(int a, int b, int c, int d, int ncolor) {
 
 //desenha o cubo (faces no sentido anti-horario - face externa)
 void colorcube() {
-    glScalef(10,10,10);
-    glTranslatef(0,0,0);
+    glPushMatrix();
+
+    glTranslatef(0,-46.1,0);
+    glScalef(46,46,46);
     quad(0,3,2,1,4); 
     quad(2,3,7,6,4);
     quad(0,4,7,3,4); //fundo
@@ -177,7 +186,7 @@ void colorcube() {
     quad(4,5,6,7,4); 
     quad(0,1,5,4,4);
     
-    
+    glPopMatrix();
 }
 
 // define o tipo de projecao 
@@ -199,91 +208,168 @@ void init(void) {
 }
 
 void Temporizador (int tempo) {
+    bool a=0;
+
 	if (baixo) {
-		movY--;
-		if(movY<chao)movY=chao;
+        a=1;
+        center[1] = max(center[1]-1.0,chao);
+        viewer[1] = center[1];
 	}
 	if (cima) {
-		movY++;
-		if(movY>0)movY=0;
+        a=1;
+        center[1] = min(center[1]+1.0,0.0);
+        viewer[1] = center[1];
 	}
 	if (frente) {
-		movX++;
-        if (movX>paredeFrente) movX=paredeFrente;
+        a=1;
+        viewer[0] += viewVector[0];
+        center[0] += viewVector[0];
+        viewer[2] += viewVector[2];
+        center[2] += viewVector[2];
+
+        if(center[0] > paredeFrente) {
+            center[0] = paredeFrente;
+            viewer[0] = center[0] - radius*viewVector[0];
+        }
+        else if(center[0] < paredeTras) {
+            center[0] = paredeTras;
+            viewer[0] = center[0] - radius*viewVector[0];
+        }
+
+        if(center[2] > paredeFrente) {
+            center[2] = paredeFrente;
+            viewer[2] = center[2] - radius*viewVector[2];
+        }
+        else if(center[2] < paredeTras) {
+            center[2] = paredeTras;
+            viewer[2] = center[2] - radius*viewVector[2];
+        }
 	}
 	if (tras) {
-		movX--;
-        if (movX<paredeTras) movX=paredeTras;
+        a=1;
+        viewer[0] -= viewVector[0];
+        center[0] -= viewVector[0];
+        viewer[2] -= viewVector[2];
+        center[2] -= viewVector[2];
+
+        if(center[0] > paredeFrente) {
+            center[0] = paredeFrente;
+            viewer[0] = center[0] - radius*viewVector[0];
+        }
+        else if(center[0] < paredeTras) {
+            center[0] = paredeTras;
+            viewer[0] = center[0] - radius*viewVector[0];
+        }
+
+        if(center[2] > paredeFrente) {
+            center[2] = paredeFrente;
+            viewer[2] = center[2] - radius*viewVector[2];
+        }
+        else if(center[2] < paredeTras) {
+            center[2] = paredeTras;
+            viewer[2] = center[2] - radius*viewVector[2];
+        }
 	}
 	if (esq){
+        a=1;
 		Rot-=5;
+        // if(Rot<-1e-8) {Rot+=360.0;}
+        viewVector[0] = cos(Rot*M_PI/180);
+        viewer[0] = center[0]-radius*viewVector[0];
+        viewVector[2] = sin(Rot*M_PI/180);
+        viewer[2] = center[2]-radius*viewVector[2];
 	}
 	if (dir) {
+        a=1;
 		Rot+=5;
+        // if(Rot>1e-8) {Rot-=360.0;}
+        viewVector[0] = cos(Rot*M_PI/180);
+        viewer[0] = center[0]-radius*viewVector[0];
+        viewVector[2] = sin(Rot*M_PI/180);
+        viewer[2] = center[2]-radius*viewVector[2];
 	}
-	if (animaNavio < 1 && !animaNavioAux){ 
-			animaNavio +=0.01; }
-	if (animaNavio > -1 && animaNavioAux) 
-			animaNavio -=0.01; 
-	if (abs(animaNavio)>=0.4)  
-		animaNavioAux = !animaNavioAux;
+	// if (animaNavio < 1 && !animaNavioAux){ 
+	// 		animaNavio +=0.01; }
+	// if (animaNavio > -1 && animaNavioAux) 
+	// 		animaNavio -=0.01; 
+	// if (abs(animaNavio)>=0.4)  
+	// 	animaNavioAux = !animaNavioAux;
 		
-	if (animaCardume < 8 && !animaCardumeAux)
-		animaCardume +=0.07;
-	if (animaCardume > -8 && animaCardumeAux)
-		animaCardume -= 0.07;
-	if (abs(animaCardume)>=7) { animaCardumeAux = !animaCardumeAux; inverteCardume = !inverteCardume;}
-    animaJetski += 2;
-    if (torpedo)
-        animaTorpedo+=1;
-    if (animaTorpedo>20){
-        animaTorpedo=0;
-        torpedo = false;
-    }
+	// if (animaCardume < 8 && !animaCardumeAux)
+	// 	animaCardume +=0.07;
+	// if (animaCardume > -8 && animaCardumeAux)
+	// 	animaCardume -= 0.07;
+	// if (abs(animaCardume)>=7) { animaCardumeAux = !animaCardumeAux; inverteCardume = !inverteCardume;}
+    // animaJetski += 2;
+    // if (torpedo)
+    //     animaTorpedo+=1;
+    // if (animaTorpedo>20){
+    //     animaTorpedo=0;
+    //     torpedo = false;
+    // }
 	glutPostRedisplay();
 	glutTimerFunc(1,Temporizador,0);
+
+    if(a) {
+        cerr << center[0] << "," << center[1] << "," << center[2] << " = " << viewer[0] << "," << viewer[1] << "," << viewer[2] << " = " << viewVector[0] << "," << viewVector[1] << "," << viewVector[2] << " " << Rot << endl;
+        a=0;
+    }
 }
 
 void display(void) {
     double seno = sin (Rot*PI/180);
     double coseno = cos (Rot*PI/180);
-    //PosX = movX;//se tu for consertar o giro, usa as coordenadas certas pro torpedo
-    //PosZ = movZ;//(movZ = 0, nao ta andando nessa dimension)
-    //PosY = movY+20; //(inicialmente tem um translate de 20 pra ficar na posicao certa
+    //se tu for consertar o giro, usa as coordenadas certas pro torpedo
+    //(movZ = 0, nao ta andando nessa dimension)
+    //(inicialmente tem um translate de 20 pra ficar na posicao certa
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //limpa a janela
     glLoadIdentity();
+
     if (POV == 1) //POV outside
-		gluLookAt(viewer[0]-10-movX/6.7,viewer[1]-1.5+movY/6.6,viewer[2]+movZ, // define posicao do observador
-		-1.0-movX/6.7, 6+movY/6.6, 0.0+movZ,                                   // ponto de interesse (foco)
-		0.0, 1.0, 0.0);                                                        
+        // gluLookAt(0.0,0.0,8.0, // define posicao do observador
+		// 0.0,20.0,0.0,                                   // ponto de interesse (foco)
+		// 0.0, 1.0, 0.0);  
+        gluLookAt(viewer[0],viewer[1], viewer[2], // define posicao do observador
+		center[0], center[1], center[2],                                   // ponto de interesse (foco)
+		0.0, 1.0, 0.0);                                                    
 	else if (POV == 0) //POV inside
-		gluLookAt(-1.5+viewer[0]-10-movX/6.7,viewer[1]-1.7+movY/6.65,viewer[2]+movZ, // define posicao do observador
-		-2.5-movX/6.6, 6.5+movY/6.7, 0.0+movZ,                                 // ponto de interesse (foco)
-		0.0, 1.0, 0.0);   													 // vetor de "view up"
-	glRotatef(-90,0,1,0);
-    glScalef(0.3,0.3,0.3);
-    glPushMatrix(); {
-    glScalef(0.5,0.5,0.5);
-    glTranslatef(0,40,0); 
-	glTranslatef(movZ,movY,movX);
+		gluLookAt(-1.5+viewer[0]-10-PosX/6.7,viewer[1]-1.7+PosY/6.65,viewer[2]+PosZ, // define posicao do observador
+		-2.5-PosX/6.6, 6.5+PosY/6.7, 0.0+PosZ,                                 // ponto de interesse (foco)
+		0.0, 1.0, 0.0);   		 // vetor de "view up"
+	// glRotatef(-90,0,1,0);
+    // glScalef(0.3,0.3,0.3);
+    // glPushMatrix(); {
+    // glScalef(0.5,0.5,0.5);
+    // glTranslatef(0,40,0); 
+	// glTranslatef(PosX,PosY,PosZ);
     //glTranslatef(coseno,0,-seno);
-    };
+    // };
     
+    glPushMatrix();
+
+    glTranslated(center[0], center[1], center[2]);
+	glRotatef(-1*Rot,0,1,0);  //fazer translacao pra rodar direito
+    glRotatef(90,0,1,0);
+    glTranslated(-1*center[0], -1*center[1], -1*center[2]);
+    glTranslated(center[0], center[1], center[2]);
+    
+    // cerr << center[0] << "," << center[0] << "," << center[0] << " " << " " << Rot << " viewer: ";
+    // cerr << viewer[0] << "," << viewer[1] << "," << viewer[2] << endl;
+
     Parser("models/submarino.obj", 0); //0 = sem cor
     glPopMatrix();	
-    glPushMatrix();{
-    //cerr<<seno<<" "<<coseno<<" ";
+    // glPushMatrix();{
 	
-	//glTranslatef(-movZ,-(movY+20),-movX);
-	glRotatef(Rot,0,1,0);  //fazer translacao pra rodar direito
-    //glTranslatef(movZ,movY+20,movX);
-    }
-    glPushMatrix();{
-        glScalef(2.25,1,2.25);
-        glTranslatef(0,-7,0);
-    }
+
+    // }
+    glPushMatrix();
+    
+        glTranslatef(0,-63,0);
+        glScalef(6,1,6);
+    
     Parser("models/areia.obj",7); //7 = amarelo
     glPopMatrix();
+    /*
     glPushMatrix();{
         glTranslatef(-6,-16.7,-3);
         glScalef(0.4,0.4,0.4);
@@ -339,12 +425,12 @@ void display(void) {
         glPopMatrix();
     }
     glScalef(2,2,2);
+    */
     colorcube(); //desenha o cubo
-    glPopMatrix();
-    if (showmenu && POV==1) 
-		desenha_menu();
-	else if  (showmenu && POV==0) 
-		desenha_menu2();
+    // if (showmenu && POV==1) 
+	// 	desenha_menu();
+	// else if  (showmenu && POV==0) 
+	// 	desenha_menu2();
     glFlush();
     glutSwapBuffers(); //usando double buffer (para evitar 'flicker')
 }
