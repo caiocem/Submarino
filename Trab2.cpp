@@ -43,7 +43,7 @@ int largurajanela = 900, alturajanela = 600;
 bool baixo,cima,esq,dir,frente,tras = false;
 //movimento
 double movY,esque,direi,movX,Rot,movZ = 0;
-double PosX, PosZ =0;
+double PosX, PosZ, PosY = 0;
 //vertices do cubo
 GLfloat vertices[8][3] = { {-1.0,-1.0,1.0},{-1.0,1.0,1.0},{1.0,1.0,1.0},{1.0,-1.0,1.0},
 {-1.0,-1.0,-1.0},{-1.0,1.0,-1.0},{1.0,1.0,-1.0},{1.0,-1.0,-1.0} };
@@ -56,9 +56,8 @@ GLfloat colors[8][4] = { {0.0,0.0,0.0,0.8} , {1.0,0.0,0.0,0.8}, {1.0,1.0,0.0,0.8
 {0.0,0.0,1.0,0.8} , {0.215,0.165,0.0,0.8},{0.198,0.089,0.007,0.8},{128,128,0,0.5}};
 
 //Vars de "animacao"
-double animaNavio,animaCardume = 0;
-bool animaNavioAux, animaCardumeAux = false;
-int inverteCardume = 1;
+double animaNavio,animaCardume,animaJetski,animaTorpedo = 0;
+bool animaNavioAux, animaCardumeAux, inverteCardume, torpedo = false;
 //posicao do observador (camera)
 double POV = 1;
 GLdouble viewer[] = {12.0, 8.0, 0.0};
@@ -233,7 +232,14 @@ void Temporizador (int tempo) {
 		animaCardume +=0.07;
 	if (animaCardume > -8 && animaCardumeAux)
 		animaCardume -= 0.07;
-	if (abs(animaCardume)>=7) { animaCardumeAux = !animaCardumeAux;}
+	if (abs(animaCardume)>=7) { animaCardumeAux = !animaCardumeAux; inverteCardume = !inverteCardume;}
+    animaJetski += 2;
+    if (torpedo)
+        animaTorpedo+=1;
+    if (animaTorpedo>20){
+        animaTorpedo=0;
+        torpedo = false;
+    }
 	glutPostRedisplay();
 	glutTimerFunc(1,Temporizador,0);
 }
@@ -241,7 +247,7 @@ void Temporizador (int tempo) {
 void display(void) {
     double seno = sin (Rot*PI/180);
     double coseno = cos (Rot*PI/180);
-    //PosX = movX;
+    //PosX = movX;//se tu for consertar o giro, usa as coordenadas certas pro torpedo
     //PosZ = movZ;//(movZ = 0, nao ta andando nessa dimension)
     //PosY = movY+20; //(inicialmente tem um translate de 20 pra ficar na posicao certa
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //limpa a janela
@@ -293,6 +299,12 @@ void display(void) {
     glPushMatrix();{
         glTranslatef(-15,-10,6);
         glTranslatef(0,0,animaCardume);
+        if (inverteCardume) {
+            glTranslatef(15,10,-6);
+            glScalef(1,1,-1);
+            glTranslatef(-15,-10,6);
+            //inverte = 0;
+        }
     }
     Parser("models/cardumao.obj",0);
     glPopMatrix();
@@ -305,12 +317,27 @@ void display(void) {
     
     glPushMatrix();{
 		glTranslatef(-15,20,-7);
-		//glTranslatef(aniJet1,0,aniJet2);
+		//glRotatef(animaJetski,0,1,0);
 		glScalef(0.2,0.2,0.2);
         glTranslatef(0,animaNavio,0);
     }
     Parser("models/jetski.obj",5); //cinza
     glPopMatrix(); 
+    if (torpedo) { //se tu for consertar o giro usa as coordenadas certas pro torpedo
+        glPushMatrix();{
+            double PosY_torp = PosY;
+            double PosX_torp = PosX;
+            double cosenoTorp = coseno;double senoTorp = seno;
+            glTranslatef(0,PosY_torp,PosX_torp);
+            glTranslatef(animaTorpedo*cosenoTorp,0,animaTorpedo*senoTorp);
+            //glTranslatef()
+            double rotTorp = -Rot;
+            glRotatef(rotTorp,0,1,0);
+            //glTranslatef(-animaTorpedo*coseno,0,-animaTorpedo*seno);
+        }
+        Parser("models/torpedo.obj",0); //cinza
+        glPopMatrix();
+    }
     glScalef(2,2,2);
     colorcube(); //desenha o cubo
     glPopMatrix();
@@ -325,11 +352,12 @@ void display(void) {
 void keyboard(unsigned char key, int x, int y) {
     switch(key) {
 		case 27: exit(0); //ESC
+        case 32: torpedo=true; break;//space
 		case 'w': case 'W': frente=true; break;
 		case 's': case 'S': tras=true; break;
 		case 'h': case 'H': showmenu = !showmenu; break;
-	    case 'i': case 'F': POV = 0;  break;
-		case 'f': case 'I': POV = 1;  break;
+	    case 'i': case 'I': POV = 0;  break;
+		case 'f': case 'F': POV = 1;  break;
 	}
     //display();
 }
@@ -339,8 +367,6 @@ void Upkeyboard(unsigned char key, int x, int y) {
 		case 27: exit(0); //ESC
 		case 'w': case 'W': frente=false; break;
 		case 's': case 'S': tras=false;  break;
-		case 'i': case 'F': tras=false;  break;
-		case 'f': case 'I': tras=false;  break;
 		//case 'h': showmenu = !showmenu; break; menu nao aplica manter pressionado
 	}
     //display();
