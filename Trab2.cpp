@@ -1,20 +1,7 @@
 // 
 // INF390 - Computa��o Gr�fica
-//
-// Visualiza�ao 3D
-// Desenha um cubo centrado na origem com faces de -1 a 1
-// coloridas com diferentes cores
-//
-// Permite que a posicao do observador seja alterada usando o teclado 
-// X -> soma uma unidade na coordenada x do observador 
-// x -> subtrai  uma unidade na coordenada x do observador 
-// Y -> soma uma unidade na coordenada y do observador 
-// y -> subtrai  uma unidade na coordenada y do observador 
-// Z -> soma uma unidade na coordenada z do observador 
-// z -> subtrai  uma unidade na coordenada z do observador 
-//
-// Marcus V. A. Andrade - 25/09/2008
-//
+// Submarino
+
 
 #include <GL/glut.h>
 #include <vector>
