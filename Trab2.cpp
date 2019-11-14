@@ -60,7 +60,10 @@ double animaNavio,animaCardume,animaJetski,animaTorpedo = 0;
 bool animaNavioAux, animaCardumeAux, inverteCardume, torpedo = false;
 //posicao do observador (camera)
 double POV = 1;
-GLdouble viewer[] = {12.0, 8.0, 0.0};
+double CamX,CamY=0;
+double FocoX = -1;double FocoY = 6;
+bool trocaCam,initCam = false;
+GLdouble viewer[] = {2.0, 6.5, 0.0};
 
 // desenha uma face do cubo
 // a, b, c e d sao indices no vetor de vertices
@@ -144,14 +147,14 @@ void desenha_menu2 () {
 	glTranslatef(-2,-1,0);
 	texto("                     Menu de Comandos                   ",4,24+movY/2.003,2.01+movX/2.010);
 	texto("Up (tecla direcional)     | Mover (verticalmente) para cima ", 4,23.9+movY/2.003,2.02+movX/2.010);
-	texto("Down (tecla direcional)   | Mover (verticalmente) para baixo",4+movZ,23.8+movY/2.003,2.03+movX/2.010);
-    texto("Left (tecla direcional)   | Virar (aproximadamente) 5o para a direita",4+movZ,23.7+movY/2.003,2.04+movX/2.010);
-    texto("Right (tecla direcional)  | Virar (aproximadamente) 5o para a esquerda",4+movZ,23.6+movY/2.003,2.05+movX/2.010);
-    texto("W ou w                    | Ir para a frente",4+movZ,23.5+movY/2.003,2.06+movX/2.010);
-	texto("S ou s                    | Re",4+movZ,23.4+movY/2.003,2.07+movX/2.010);
-	texto("F ou f                    | Ponto de vista de fora do submarino",4+movZ,23.3+movY/2.003,2.08+movX/2.010);
-	texto("I ou i                    | Ponto de vista de dentro do submarino",4+movZ,23.2+movY/2.003,2.09+movX/2.010);
-	texto("H ou h                    | Apresentar/Ocultar um menu de ajuda",4+movZ,23.1+movY/2.003,2.1+movX/2.010); 
+	texto("Down (tecla direcional)   | Mover (verticalmente) para baixo",4+movZ,23.8+movY/2.003,2.04+movX/2.010);
+    texto("Left (tecla direcional)   | Virar (aproximadamente) 5o para a direita",4+movZ,23.7+movY/2.005,2.06+movX/2.010);
+    texto("Right (tecla direcional)  | Virar (aproximadamente) 5o para a esquerda",4+movZ,23.6+movY/2.003,2.08+movX/2.010);
+    texto("W ou w                    | Ir para a frente",4+movZ,23.5+movY/2.003,2.09+movX/2.010);
+	texto("S ou s                    | Re",4+movZ,23.4+movY/2.003,2.11+movX/2.010);
+	texto("F ou f                    | Ponto de vista de fora do submarino",4+movZ,23.3+movY/2.003,2.13+movX/2.010);
+	texto("I ou i                    | Ponto de vista de dentro do submarino",4+movZ,23.2+movY/2.003,2.15+movX/2.010);
+	texto("H ou h                    | Apresentar/Ocultar um menu de ajuda",4+movZ,23.1+movY/2.003,2.17+movX/2.010); 
 }
 
 void quad(int a, int b, int c, int d, int ncolor) {
@@ -240,6 +243,22 @@ void Temporizador (int tempo) {
         animaTorpedo=0;
         torpedo = false;
     }
+    if (POV == 0 && CamX>-1.5 && trocaCam){
+		CamX-=0.2; }
+	if (POV == 0 && FocoY<6.5 && trocaCam){
+		FocoY+=0.05;}
+	if (POV == 0 && CamY>-0.2 && trocaCam){
+		CamY-=0.05; }
+	if (POV == 0 && FocoX>4.5 && trocaCam){
+		FocoX-=0.2;}
+	if (POV == 1 && CamX<0 && !trocaCam && initCam){
+		CamX+=0.2; }
+	if (POV == 1 && CamY<0 && !trocaCam && initCam){
+		CamY+=0.05; }
+	if (POV == 1 && FocoX<-1 && !trocaCam && initCam){
+		FocoX+=0.2;}
+	if (POV == 1 && FocoY>6 && !trocaCam && initCam){
+		FocoY-=0.05;}
 	glutPostRedisplay();
 	glutTimerFunc(1,Temporizador,0);
 }
@@ -252,14 +271,20 @@ void display(void) {
     //PosY = movY+20; //(inicialmente tem um translate de 20 pra ficar na posicao certa
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //limpa a janela
     glLoadIdentity();
+    
+		gluLookAt(CamX+viewer[0]-movX/6.7,CamY+viewer[1]+movY/6.6,viewer[2]+movZ, // define posicao do observador
+		FocoX-movX/6.7, FocoY+movY/6.6, 0.0+movZ,                                   // ponto de interesse (foco)
+		0.0, 1.0, 0.0); 
+  /*
     if (POV == 1) //POV outside
-		gluLookAt(viewer[0]-10-movX/6.7,viewer[1]-1.5+movY/6.6,viewer[2]+movZ, // define posicao do observador
+		gluLookAt(viewer[0]-movX/6.7,viewer[1]+movY/6.6,viewer[2]+movZ, // define posicao do observador
 		-1.0-movX/6.7, 6+movY/6.6, 0.0+movZ,                                   // ponto de interesse (foco)
 		0.0, 1.0, 0.0);                                                        
 	else if (POV == 0) //POV inside
-		gluLookAt(-1.5+viewer[0]-10-movX/6.7,viewer[1]-1.7+movY/6.65,viewer[2]+movZ, // define posicao do observador
+		gluLookAt(viewer[0]-1.5-movX/6.7,viewer[1]-0.2+movY/6.65,viewer[2]+movZ, // define posicao do observador
 		-2.5-movX/6.6, 6.5+movY/6.7, 0.0+movZ,                                 // ponto de interesse (foco)
 		0.0, 1.0, 0.0);   													 // vetor de "view up"
+	*/
 	glRotatef(-90,0,1,0);
     glScalef(0.3,0.3,0.3);
     glPushMatrix(); {
@@ -356,8 +381,8 @@ void keyboard(unsigned char key, int x, int y) {
 		case 'w': case 'W': frente=true; break;
 		case 's': case 'S': tras=true; break;
 		case 'h': case 'H': showmenu = !showmenu; break;
-	    case 'i': case 'I': POV = 0;  break;
-		case 'f': case 'F': POV = 1;  break;
+	    case 'i': case 'I': if (POV ==0) break;POV = 0; trocaCam = !trocaCam; initCam=true;break;
+		case 'f': case 'F': if (POV ==1) break;POV = 1; trocaCam = !trocaCam; initCam=true;break;
 	}
     //display();
 }
