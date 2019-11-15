@@ -16,3 +16,4 @@
 - animações nos objetos: navio e jetski, acima da água, para "flutuar". 
 - animação no cardume de peixes abaixo d'água para nadar de um lado ao outro
 - transicão gradual entre as perspectivas do barco (camera superior e frontal)
+- transparência nos modelos para simular iluminação
