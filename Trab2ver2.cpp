@@ -295,18 +295,18 @@ void Temporizador (int tempo) {
         viewVector[2] = sin(Rot*M_PI/180);
         viewer[2] = center[2]-radius*viewVector[2];
 	}
-	// if (animaNavio < 1 && !animaNavioAux){ 
-	// 		animaNavio +=0.01; }
-	// if (animaNavio > -1 && animaNavioAux) 
-	// 		animaNavio -=0.01; 
-	// if (abs(animaNavio)>=0.4)  
-	// 	animaNavioAux = !animaNavioAux;
+	 if (animaNavio < 1 && !animaNavioAux){ 
+	 		animaNavio +=0.01; }
+	 if (animaNavio > -1 && animaNavioAux) 
+	 		animaNavio -=0.01; 
+	 if (abs(animaNavio)>=0.4)  
+	 	animaNavioAux = !animaNavioAux;
 		
-	// if (animaCardume < 8 && !animaCardumeAux)
-	// 	animaCardume +=0.07;
-	// if (animaCardume > -8 && animaCardumeAux)
-	// 	animaCardume -= 0.07;
-	// if (abs(animaCardume)>=7) { animaCardumeAux = !animaCardumeAux; inverteCardume = !inverteCardume;}
+	 if (animaCardume < 8 && !animaCardumeAux)
+	 	animaCardume +=0.07;
+	 if (animaCardume > -8 && animaCardumeAux)
+	 	animaCardume -= 0.07;
+	 if (abs(animaCardume)>=7) { animaCardumeAux = !animaCardumeAux; inverteCardume = !inverteCardume;}
     // animaJetski += 2;
     // if (torpedo)
     //     animaTorpedo+=1;
@@ -412,21 +412,23 @@ void display(void) {
     
     Parser("models/areia.obj",7); //7 = amarelo
     glPopMatrix();
-    /*
+    
     glPushMatrix();{
-        glTranslatef(-6,-16.7,-3);
-        glScalef(0.4,0.4,0.4);
+        glTranslatef(-6,-73.7,-3);
+        glScalef(1.5,1.5,1.5);
     }
-    Parser("models/tesouro.obj",6); //marrom
+    Parser("models/tesouro.obj",6); //marrom 
     glPopMatrix(); 
     glPushMatrix();{
-        glTranslatef(10,20,0);
+        glTranslatef(10,0,0);
+        glScalef(2,2,2);
         glTranslatef(0,animaNavio,0);
     }
     Parser("models/navio.obj",6);
-    glPopMatrix();
+    glPopMatrix(); 
     glPushMatrix();{
-        glTranslatef(-15,-10,6);
+        glTranslatef(-45,-50,6);
+        glScalef(2,2,2);
         glTranslatef(0,0,animaCardume);
         if (inverteCardume) {
             glTranslatef(15,10,-6);
@@ -435,17 +437,18 @@ void display(void) {
             //inverte = 0;
         }
     }
-    Parser("models/cardumao.obj",0);
+    Parser("models/cardumao.obj",0); 
     glPopMatrix();
     glPushMatrix();{
-        glTranslatef(18,-19,-3);
-        glScalef(4,4.5,4);
+        glTranslatef(28,-75,-3);
+        glScalef(6,8,6);
     }
     Parser("models/abacaxi.obj",3); //laranja
     glPopMatrix();
     
     glPushMatrix();{
-		glTranslatef(-15,20,-7);
+		glTranslatef(-15,0,-7);
+        glScalef(2,2,2);
 		//glRotatef(animaJetski,0,1,0);
 		glScalef(0.2,0.2,0.2);
         glTranslatef(0,animaNavio,0);
@@ -467,8 +470,8 @@ void display(void) {
         Parser("models/torpedo.obj",0); //cinza
         glPopMatrix();
     }
-    glScalef(2,2,2);
-    */
+    //glScalef(2,2,2);
+    
     colorcube(); //desenha o cubo
     if(showmenu && POV==1) 
 		desenha_menu();
