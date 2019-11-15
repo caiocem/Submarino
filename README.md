@@ -1,7 +1,3 @@
-# Foobar
-
-Foobar is a Python library for dealing with word pluralization.
-
 ## Alunos
 
 - Caio O. H. Henrici : 92558
