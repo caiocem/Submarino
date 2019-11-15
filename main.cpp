@@ -35,8 +35,6 @@ bool baixo,cima,esq,dir,frente,tras = false;
 
 //movimento
 double esque,direi = 0;
-double PosX, PosZ = 0;
-double PosY = 0.0;
 double Rot = 0.0;
 double radius = 7.5;
 
@@ -62,9 +60,9 @@ double POV = 1;
 double CamX,CamZ=0;double CamY=1;
 double FocoX,FocoY,FocoZ = 0;
 bool trocaCam,initCam = false;
-GLdouble center[] = {0.0, 0.0, 0.0};
-GLdouble viewer[] = {-1*radius, 0.0, 0.0};
-GLdouble viewVector[] = {1.0, 0.0, 0.0};
+GLdouble center[] = {0.0, 0.0, 0.0}; //Posicao do submarino
+GLdouble viewer[] = {-1*radius, 0.0, 0.0}; //Posicao da camera
+GLdouble viewVector[] = {1.0, 0.0, 0.0}; //Vetor unitario que aponta de viewer para center
 
 void Parser(string nome, int cor) {  
     fstream f;
@@ -329,10 +327,11 @@ void Temporizador (int tempo) { //funcao para dar mais fluides aos movimentos, i
 	glutPostRedisplay();
 	glutTimerFunc(1,Temporizador,0);
 
-    if(a) {
+    // cerr para debug, caso seja necessario analisar os valores das variaveis durante a execucao
+    // if(a) {
         //cerr << center[0] << "," << center[1] << "," << center[2] << " = " << viewer[0] << "," << viewer[1] << "," << viewer[2] << " = " << viewVector[0] << "," << viewVector[1] << "," << viewVector[2] << " " << Rot << endl;
-        a=0;
-    }
+        // a=0;
+    // }
 }
 
 void display(void) {
@@ -410,19 +409,15 @@ void display(void) {
         glTranslatef(0,animaNavio,0);
     }
     Parser("models/jetski.obj",5); //cinza
-    glPopMatrix(); 
+    glPopMatrix();
+
+    // Funcao extra, nao finalizada
     if (torpedo) { 
         glPushMatrix();{
-            double PosY_torp = PosY;
-            double PosX_torp = PosX;
-            double cosenoTorp = coseno;double senoTorp = seno;
+            double posTorpedo[3] = {center[0],center[1],center[2]};
             //glTranslatef(0,PosY_torp,PosX_torp);
+            // for(int i=0;)
             glTranslatef(animaTorpedo*viewVector[0], 0, animaTorpedo*viewVector[2]);
-           // glTranslatef(animaTorpedo*cosenoTorp,0,animaTorpedo*senoTorp);
-            //glTranslatef()
-            double rotTorp = -Rot;
-            //glRotatef(rotTorp,0,1,0);
-            //glTranslatef(-animaTorpedo*coseno,0,-animaTorpedo*seno);
         }
         Parser("models/torpedo.obj",0); //cinza
         glPopMatrix();
