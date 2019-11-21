@@ -64,16 +64,66 @@ GLdouble center[] = {0.0, 0.0, 0.0}; //Posicao do submarino
 GLdouble viewer[] = {-1*radius, 0.0, 0.0}; //Posicao da camera
 GLdouble viewVector[] = {1.0, 0.0, 0.0}; //Vetor unitario que aponta de viewer para center
 
-void Parser(string nome, int cor) {  
-    fstream f;
-    f.open (nome);
+bool Parser(const char * nome, int cor) {  
+    //fstream f;
+    //f.open (nome);
+    FILE * f = fopen(nome, "r");
+    if( f == NULL ){
+        printf("Nao da pra abrir\n");
+        return false;
+    }
 	vector<vector<GLdouble> > Vertices;
-	GLdouble V;
+    vector<vector<GLdouble> > TextureVertices;
+    vector<vector<GLdouble> > NormalVertices;
+    while( 1 ){
+        char lineHeader[128];
+        int res = fscanf(f, "%s", lineHeader); // le primeira palavra da linha
+        if (res == EOF)
+            break; // terminou
+        if ( strcmp( lineHeader, "v" ) == 0 ){ //VERTICE
+            double x,y,z;
+            fscanf(f, "%lf %lf %lf\n", &x, &y, &z ); //ler vertice
+            vector<GLdouble> vertice; vertice.push_back(x);vertice.push_back(y);vertice.push_back(z);
+            Vertices.push_back(vertice);
+        }else if ( strcmp( lineHeader, "vt" ) == 0 ){  //VERTICE TEXTURA
+            double x,y;
+            fscanf(f, "%lf %lf\n", &x, &y ); //ler textura
+            vector<GLdouble> Texvertice; Texvertice.push_back(x);Texvertice.push_back(y);
+            TextureVertices.push_back(Texvertice);
+        } else if ( strcmp( lineHeader, "vn" ) == 0 ){   //VERTICE ENORMAL
+            double x,y,z;
+            fscanf(f, "%lf %lf %lf\n", &x, &y, &z ); //ler normal
+            vector<GLdouble> Normalvertice; Normalvertice.push_back(x);Normalvertice.push_back(y);Normalvertice.push_back(z);
+            NormalVertices.push_back(Normalvertice);
+        } else if ( strcmp( lineHeader, "f" ) == 0 ){
+            std::string vertex1, vertex2, vertex3;
+            unsigned int vertexIndex[3], uvIndex[3], normalIndex[3];
+            // ler o indice do vertice "/" indice do vetor uv "/" indice da normal
+            int matches = fscanf(f, "%d/%d/%d %d/%d/%d %d/%d/%d\n", &vertexIndex[0], &uvIndex[0], 
+            &normalIndex[0], &vertexIndex[1], &uvIndex[1], &normalIndex[1], &vertexIndex[2], &uvIndex[2], &normalIndex[2] );
+            if (matches != 9){
+                printf("Erro no formato\n");
+                return false;
+            }
+            // o q faz com uvIndex[0]uvIndex[1]uvIndex[2] e normalIndex[0]normalIndex[1]normalIndex[2] ???
+            if (cor != 0)
+            glColor4fv(colors[cor]);
+            else
+                glColor4f(0,0,0,0.9);
+            glBegin(GL_TRIANGLES);
+                glVertex3f (Vertices[vertexIndex[0]-1][0], Vertices[vertexIndex[0]-1][1], Vertices[vertexIndex[0]-1][2]);
+                glVertex3f (Vertices[vertexIndex[1]-1][0], Vertices[vertexIndex[1]-1][1], Vertices[vertexIndex[1]-1][2]);
+                glVertex3f (Vertices[vertexIndex[2]-1][0], Vertices[vertexIndex[2]-1][1], Vertices[vertexIndex[2]-1][2]);
+            glEnd();
+        }
+    }
+/*	PARSER ANTIGO
+    GLdouble V;
 	char carac;
 	int counter = 0;
 	double i = 0;
     string lixo;
-    for(int i=0;i<3;i++)
+    for(int i=0;i<4;i++)
         getline(f,lixo);
 	while(true){
 		f>>carac;
@@ -111,7 +161,9 @@ void Parser(string nome, int cor) {
         if(carac == 's') f>>lixo2; //remover smoth entre faces
 		conta++;
     }
-	f.close();
+    */
+	fclose (f);
+
 }
 
 void texto(string s,float x,float y,float z) //func de texto usando bitmap
@@ -359,7 +411,7 @@ void display(void) {
     glTranslated(-1*center[0], -1*center[1], -1*center[2]);
     glTranslated(center[0], center[1], center[2]);
 
-    Parser("models/submarino.obj", 0); //0 = sem cor
+    Parser("models/submarino2.obj", 0); //0 = sem cor
     glPopMatrix();	
 
     glPushMatrix();
@@ -367,21 +419,21 @@ void display(void) {
         glTranslatef(0,-63,0);
         glScalef(6,1,6);
     
-    Parser("models/areia.obj",7); //7 = amarelo
+    Parser("models/areia2.obj",7); //7 = amarelo
     glPopMatrix();
     
     glPushMatrix();{
         glTranslatef(-6,-73.7,-3);
         glScalef(1.5,1.5,1.5);
     }
-    Parser("models/tesouro.obj",6); //marrom 
+    Parser("models/tesouro2.obj",6); //marrom 
     glPopMatrix(); 
     glPushMatrix();{
         glTranslatef(12,0,0);
         glScalef(2,2,2);
         glTranslatef(0,animaNavio,0);
     }
-    Parser("models/navio.obj",6);
+    Parser("models/navio2.obj",6);
     glPopMatrix(); 
     glPushMatrix();{
         glTranslatef(-45,-50,6);
@@ -393,13 +445,13 @@ void display(void) {
             glTranslatef(-15,-10,6);
         }
     }
-    Parser("models/cardumao.obj",0); 
+    Parser("models/cardumao2.obj",0); 
     glPopMatrix();
     glPushMatrix();{
         glTranslatef(28,-75,-3);
         glScalef(6,8,6);
     }
-    Parser("models/abacaxi.obj",3); //laranja
+    Parser("models/abacaxi2.obj",3); //laranja
     glPopMatrix();
     
     glPushMatrix();{
@@ -408,11 +460,11 @@ void display(void) {
 		glScalef(0.2,0.2,0.2);
         glTranslatef(0,animaNavio,0);
     }
-    Parser("models/jetski.obj",5); //cinza
+    Parser("models/jetski2.obj",5); //cinza
     glPopMatrix();
 
     // Funcao extra, nao finalizada
-    if (torpedo) { 
+  /*  if (torpedo) { 
         glPushMatrix();{
             double posTorpedo[3] = {center[0],center[1],center[2]};
             //glTranslatef(0,PosY_torp,PosX_torp);
@@ -422,7 +474,7 @@ void display(void) {
         Parser("models/torpedo.obj",0); //cinza
         glPopMatrix();
     }
-
+	*/
     
     colorcube(); //desenha o cubo
     if(showmenu && POV==1)         //caso 'h' seja pressionado chama o menu do ponto de vista atua
