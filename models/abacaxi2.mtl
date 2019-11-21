@@ -1,0 +1,13 @@
+# Blender MTL File: 'None'
+# Material Count: 1
+
+newmtl lambert2SG
+Ns 96.078431
+Ka 0.000000 0.000000 0.000000
+Kd 0.000000 0.000000 0.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd /home/alunos/caio.henrici/Área de Trabalho/Submarino-master/modelosOriginal/Pineapple_v1_L2.123cd933e306-5311-404e-bac7-c360b305d8c5/10200_Pineapple.jpg
