@@ -113,13 +113,12 @@ bool Parser(const char * nome, int cor) {
             else
                 glColor4f(0,0,0,0.9);
             glColorMaterial(GL_FRONT_AND_BACK,GL_AMBIENT);
-            
             glBegin(GL_TRIANGLES);
-                glVertex3f (NormalVertices[normalIndex[0]-1][0],NormalVertices[normalIndex[0]-1][1],NormalVertices[normalIndex[0]-1][2]);
+                glNormal3f (NormalVertices[normalIndex[0]-1][0],NormalVertices[normalIndex[0]-1][1],NormalVertices[normalIndex[0]-1][2]);
                 glVertex3f (Vertices[vertexIndex[0]-1][0], Vertices[vertexIndex[0]-1][1], Vertices[vertexIndex[0]-1][2]);
-                glVertex3f (NormalVertices[normalIndex[1]-1][0],NormalVertices[normalIndex[1]-1][1],NormalVertices[normalIndex[1]-1][2]);
+                glNormal3f (NormalVertices[normalIndex[1]-1][0],NormalVertices[normalIndex[1]-1][1],NormalVertices[normalIndex[1]-1][2]);
                 glVertex3f (Vertices[vertexIndex[1]-1][0], Vertices[vertexIndex[1]-1][1], Vertices[vertexIndex[1]-1][2]);
-                glVertex3f (NormalVertices[normalIndex[2]-1][0],NormalVertices[normalIndex[2]-1][1],NormalVertices[normalIndex[2]-1][2]);
+                glNormal3f (NormalVertices[normalIndex[2]-1][0],NormalVertices[normalIndex[2]-1][1],NormalVertices[normalIndex[2]-1][2]);
                 glVertex3f (Vertices[vertexIndex[2]-1][0], Vertices[vertexIndex[2]-1][1], Vertices[vertexIndex[2]-1][2]);
             glEnd();
         }
