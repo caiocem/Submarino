@@ -111,8 +111,8 @@ bool Parser(const char * nome, int cor) {
             if (cor != 0)
             glColor4fv(colors[cor]);
             else
-                glColor4f(0,0,0,0.9);
-            glColorMaterial(GL_FRONT_AND_BACK,GL_AMBIENT);
+                glColor4f(0.1,0.1,0.1,1);
+            glColorMaterial(GL_FRONT_AND_BACK,GL_AMBIENT_AND_DIFFUSE);
             glBegin(GL_TRIANGLES);
                 glNormal3f (NormalVertices[normalIndex[0]-1][0],NormalVertices[normalIndex[0]-1][1],NormalVertices[normalIndex[0]-1][2]);
                 glVertex3f (Vertices[vertexIndex[0]-1][0], Vertices[vertexIndex[0]-1][1], Vertices[vertexIndex[0]-1][2]);
@@ -216,6 +216,7 @@ void quad(int a, int b, int c, int d, int ncolor) {
     glColor4f(0,0,1,0.8);
     if(ncolor == 7)
         glColor4f(0.2,0.5,1.0,0.7);
+    //glColorMaterial(GL_FRONT_AND_BACK,GL_AMBIENT);
     glBegin(GL_QUADS);
         glVertex3fv(vertices[a]);
         glVertex3fv(vertices[b]);
@@ -252,7 +253,7 @@ void init(void) {
     GLfloat mat_diffuse[ ] = { 1.0, 0.0, 0.0, 1.0 };
     GLfloat mat_specular[ ] = { 0.0, 1.0, 1.0, 1.0 };
     GLfloat mat_shininess[ ] = { 1.0, 1.0, 1.0, 1.0 };
-    GLfloat light_position[ ] = { 0.0, 20.0, 0.0, 0.0 };
+    GLfloat light_position[ ] = { 0.0, 25.0, 0.0, 0.0 };
     GLfloat white_light[ ] = { 1.0, 1.0, 1.0, 0.0 };
     GLfloat red_light[ ] = { 1.0, 0.0, 0.0, 0.0 };
     glClearColor (1.0, 1.0, 1.0, 1.0);
@@ -262,7 +263,7 @@ void init(void) {
     // glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
     glLightfv(GL_LIGHT1, GL_POSITION, light_position);
     glLightfv(GL_LIGHT1, GL_AMBIENT, white_light);
-    //glLightfv(GL_LIGHT0, GL_DIFFUSE, white_light);
+    glLightfv(GL_LIGHT1, GL_DIFFUSE, white_light);
     //glLightfv(GL_LIGHT0, GL_SPECULAR, white_light);
 }
 
@@ -525,9 +526,8 @@ void Upkeyboard(unsigned char key, int x, int y) {
 		case 'w': case 'W': frente=false; break;
 		case 's': case 'S': tras=false;  break;
         case 'l': case 'L': Luz=!Luz; if(Luz)glEnable(GL_LIGHTING); else glDisable(GL_LIGHTING); break;
-        case 'g': case 'G': 
-                ModoLuz=!ModoLuz; if(ModoLuz){ glDisable(GL_FLAT);glEnable(GL_SMOOTH);}
-                else {glDisable(GL_SMOOTH);glEnable(GL_FLAT);} break;
+        case 'g': case 'G': ModoLuz=!ModoLuz; if(ModoLuz) glShadeModel(GL_FLAT); else glShadeModel(GL_SMOOTH); break;
+
 		case '1':  Luz1 = !Luz1; if(Luz1) glEnable(GL_LIGHT1); else glDisable(GL_LIGHT1); break;
         case '2':  Luz2 = !Luz2; if(Luz2) glEnable(GL_LIGHT2); else glDisable(GL_LIGHT2); break;
         //case 'h': showmenu = !showmenu; break; menu nao aplica manter pressionado
@@ -579,6 +579,7 @@ int main(int argc, char **argv) {
     glEnable(GL_DEPTH_TEST); //habilita remocao de superficies ocultas
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); //determina o alpha
     glDepthFunc(GL_LEQUAL);
+    glEnable(GL_FLAT | GL_SMOOTH);
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_COLOR_MATERIAL);
     glEnable(GL_TEXTURE_2D); //habilitar textura
