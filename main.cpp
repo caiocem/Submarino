@@ -296,19 +296,30 @@ void desenha_menu2 () {
 
 void quad(int a, int b, int c, int d, int ncolor) {
     glColor4f(0,0,1,0.8);
-    // if(ncolor == 7) {
-    //     Image *image6 = loadTexture("Textures/Mar2.bmp");
-    //     glColor4f(0.2,0.5,1.0,0.7);
-    //     glEnable(GL_TEXTURE_2D);
-    //     glColorMaterial(GL_FRONT_AND_BACK,GL_AMBIENT);
-    // }
+    if(ncolor == 7) {
+        glColor4f(0.2,0.5,1.0,0.7);
+        glEnable(GL_TEXTURE_2D);
+        glColorMaterial(GL_FRONT_AND_BACK,GL_AMBIENT);
+        glBindTexture(GL_TEXTURE_2D, texture[5]);
+    }
+    // 1 2 6 5  {-1.0,1.0,1.0} {1.0,1.0,1.0} {1.0,1.0,-1.0} {-1.0,1.0,-1.0}
     glBegin(GL_QUADS);
+        if(ncolor==7)
+            glTexCoord2f(0.0f, 0.0f);
         glVertex3fv(vertices[a]);
+        if(ncolor==7)
+            glTexCoord2f(1.0f, 0.0f);
         glVertex3fv(vertices[b]);
+        if(ncolor==7)
+            glTexCoord2f(1.0f, 1.0f);
         glVertex3fv(vertices[c]);
+        if(ncolor==7)
+            glTexCoord2f(0.0f, 1.0f);
         glVertex3fv(vertices[d]);
+
     glEnd();
-    // glDisable(GL_TEXTURE_2D);
+    if(ncolor==7)
+        glDisable(GL_TEXTURE_2D);
 }
 
 //desenha o cubo com faces no sentido anti-horario/externa
@@ -369,7 +380,8 @@ void init(void) {
     Image *image3 = loadTexture("Textures/Areia.bmp"); 
     Image *image4 = loadTexture("Textures/Escamas.bmp"); 
     Image *image5 = loadTexture("Textures/Abacaxi.bmp"); 
-    if(image1 == NULL || image2 == NULL || image3 == NULL || image4 == NULL){
+    Image *image6 = loadTexture("Textures/Mar2.bmp");
+    if(image1 == NULL || image2 == NULL || image3 == NULL || image4 == NULL || image5 == NULL || image6 == NULL){
         printf("Image was not returned from loadTexture\n");
         exit(0);
     }
@@ -416,6 +428,13 @@ void init(void) {
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR); //scale linearly when image smalled than texture
     glTexImage2D(GL_TEXTURE_2D, 0, 3, image5->sizeX, image5->sizeY, 0,
                  GL_RGB, GL_UNSIGNED_BYTE, image5->data);
+    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
+
+    //Sexta textura - Mar
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR); //scale linearly when image bigger than texture
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR); //scale linearly when image smalled than texture
+    glTexImage2D(GL_TEXTURE_2D, 0, 3, image6->sizeX, image6->sizeY, 0,
+                GL_RGB, GL_UNSIGNED_BYTE, image6->data);
     glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
 }
 
