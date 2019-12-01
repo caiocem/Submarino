@@ -3,7 +3,8 @@ Alunos:
 	- Rodrigo E. O. B. Chichorro: 92535
 
 Referências: 
-	  - Aula prática de visualização 3D : referência de aplicações das funções openGl
+    - Aula prática de visualização 3D : referência de aplicações das funções openGl
+    - Aula sobre texturas : parser de carregamento da imagem bmp
     - https://www.khronos.org/opengl/ : buscar funcionamento e parâmetros de funções
     - https://stackoverflow.com : esclarecimento de duvidas em partes específicas da implementação 
     - Discução com outros grupos : uso ou não de outras funcionalidades e maneiras de implementações (transparência,         temporizadores, etc)
