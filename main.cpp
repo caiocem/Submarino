@@ -48,8 +48,8 @@ double paredeFrente = 36;
 double paredeTras = -paredeFrente; 
 
 //cor de cada face do cubo  , 6=marrom, 0=preto,4=azul, 7=amarelo, 3=laranja
-GLfloat colors[8][4] = { {0.0,0.0,0.0,0.8} , {1.0,0.0,0.0,0.8}, {1.0,1.0,0.0,0.8}, {1,0.5,0.0,0.8},
-{0.0,0.0,1.0,0.8} , {0.215,0.165,0.0,0.8},{0.198,0.089,0.007,0.8},{128,128,0,0.5}};
+GLfloat colors[8][4] = { {0.0,0.0,0.0,1.0} , {1.0,0.0,0.0,1.0}, {1.0,1.0,0.0,1.0}, {1,0.5,0.0,1.0},
+{0.0,0.0,1.0,1.0} , {0.215,0.165,0.0,1.0},{0.198,0.089,0.007,1.0},{128,128,0,1.0}};
 
 //Vars de "animacao"
 double animaNavio,animaCardume,animaJetski,animaTorpedo = 0;
@@ -63,6 +63,8 @@ bool trocaCam,initCam = false;
 GLdouble center[] = {0.0, 0.0, 0.0}; //Posicao do submarino
 GLdouble viewer[] = {-1*radius, 0.0, 0.0}; //Posicao da camera
 GLdouble viewVector[] = {1.0, 0.0, 0.0}; //Vetor unitario que aponta de viewer para center
+//Iluminação
+bool Luz,ModoLuz = false; bool Luz1,Luz2 = false;
 
 bool Parser(const char * nome, int cor) {  
     //fstream f;
@@ -110,9 +112,14 @@ bool Parser(const char * nome, int cor) {
             glColor4fv(colors[cor]);
             else
                 glColor4f(0,0,0,0.9);
+            glColorMaterial(GL_FRONT_AND_BACK,GL_AMBIENT);
+            
             glBegin(GL_TRIANGLES);
+                glVertex3f (NormalVertices[normalIndex[0]-1][0],NormalVertices[normalIndex[0]-1][1],NormalVertices[normalIndex[0]-1][2]);
                 glVertex3f (Vertices[vertexIndex[0]-1][0], Vertices[vertexIndex[0]-1][1], Vertices[vertexIndex[0]-1][2]);
+                glVertex3f (NormalVertices[normalIndex[1]-1][0],NormalVertices[normalIndex[1]-1][1],NormalVertices[normalIndex[1]-1][2]);
                 glVertex3f (Vertices[vertexIndex[1]-1][0], Vertices[vertexIndex[1]-1][1], Vertices[vertexIndex[1]-1][2]);
+                glVertex3f (NormalVertices[normalIndex[2]-1][0],NormalVertices[normalIndex[2]-1][1],NormalVertices[normalIndex[2]-1][2]);
                 glVertex3f (Vertices[vertexIndex[2]-1][0], Vertices[vertexIndex[2]-1][1], Vertices[vertexIndex[2]-1][2]);
             glEnd();
         }
@@ -242,6 +249,22 @@ void init(void) {
     glLoadIdentity();    
     gluPerspective(60.0,1.0,0.1,160.0); // projecao perspectiva
     glMatrixMode(GL_MODELVIEW);
+    GLfloat mat_ambient[ ] = { 0.0, 0.0, 1.0, 1.0 };
+    GLfloat mat_diffuse[ ] = { 1.0, 0.0, 0.0, 1.0 };
+    GLfloat mat_specular[ ] = { 0.0, 1.0, 1.0, 1.0 };
+    GLfloat mat_shininess[ ] = { 1.0, 1.0, 1.0, 1.0 };
+    GLfloat light_position[ ] = { 0.0, 20.0, 0.0, 0.0 };
+    GLfloat white_light[ ] = { 1.0, 1.0, 1.0, 0.0 };
+    GLfloat red_light[ ] = { 1.0, 0.0, 0.0, 0.0 };
+    glClearColor (1.0, 1.0, 1.0, 1.0);
+    // glMaterialfv(GL_FRONT, GL_AMBIENT, mat_ambient);
+    // glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
+    // glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
+    // glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
+    glLightfv(GL_LIGHT1, GL_POSITION, light_position);
+    glLightfv(GL_LIGHT1, GL_AMBIENT, white_light);
+    //glLightfv(GL_LIGHT0, GL_DIFFUSE, white_light);
+    //glLightfv(GL_LIGHT0, GL_SPECULAR, white_light);
 }
 
 void Temporizador (int tempo) { //funcao para dar mais fluides aos movimentos, incrementa todas
@@ -347,7 +370,7 @@ void Temporizador (int tempo) { //funcao para dar mais fluides aos movimentos, i
 		if (viewVector[2] < 0)
             CamX-=0.01;else CamX+=0.01; } */
 	if (POV == 0 && CamY<1.5 && trocaCam){
-		CamY+=0.05;cerr<<CamY<<" "; } /*
+		CamY+=0.05;} /*
     if (POV == 0 && CamZ<abs((radius+2.23)*viewVector[2]) && trocaCam){
 		if (viewVector[2] < 0)
             CamZ-=0.01; else CamZ+=0.01; }
@@ -502,7 +525,13 @@ void Upkeyboard(unsigned char key, int x, int y) {
 		case 27: exit(0); //ESC
 		case 'w': case 'W': frente=false; break;
 		case 's': case 'S': tras=false;  break;
-		//case 'h': showmenu = !showmenu; break; menu nao aplica manter pressionado
+        case 'l': case 'L': Luz=!Luz; if(Luz)glEnable(GL_LIGHTING); else glDisable(GL_LIGHTING); break;
+        case 'g': case 'G': 
+                ModoLuz=!ModoLuz; if(ModoLuz){ glDisable(GL_FLAT);glEnable(GL_SMOOTH);}
+                else {glDisable(GL_SMOOTH);glEnable(GL_FLAT);} break;
+		case '1':  Luz1 = !Luz1; if(Luz1) glEnable(GL_LIGHT1); else glDisable(GL_LIGHT1); break;
+        case '2':  Luz2 = !Luz2; if(Luz2) glEnable(GL_LIGHT2); else glDisable(GL_LIGHT2); break;
+        //case 'h': showmenu = !showmenu; break; menu nao aplica manter pressionado
 	}
 }
 
@@ -550,6 +579,9 @@ int main(int argc, char **argv) {
     glutSpecialFunc(SpecialKeys); //determina funcao callback das seta 
     glEnable(GL_DEPTH_TEST); //habilita remocao de superficies ocultas
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); //determina o alpha
+    glDepthFunc(GL_LEQUAL);
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_COLOR_MATERIAL);
     glEnable(GL_TEXTURE_2D); //habilitar textura
     glEnable(GL_BLEND); //habilita o alpha nas superficies
     glutTimerFunc(100, Temporizador,0); //determina funcao de Timer
