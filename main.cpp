@@ -296,15 +296,19 @@ void desenha_menu2 () {
 
 void quad(int a, int b, int c, int d, int ncolor) {
     glColor4f(0,0,1,0.8);
-    if(ncolor == 7)
-        glColor4f(0.2,0.5,1.0,0.7);
-    //glColorMaterial(GL_FRONT_AND_BACK,GL_AMBIENT);
+    // if(ncolor == 7) {
+    //     Image *image6 = loadTexture("Textures/Mar2.bmp");
+    //     glColor4f(0.2,0.5,1.0,0.7);
+    //     glEnable(GL_TEXTURE_2D);
+    //     glColorMaterial(GL_FRONT_AND_BACK,GL_AMBIENT);
+    // }
     glBegin(GL_QUADS);
         glVertex3fv(vertices[a]);
         glVertex3fv(vertices[b]);
         glVertex3fv(vertices[c]);
         glVertex3fv(vertices[d]);
     glEnd();
+    // glDisable(GL_TEXTURE_2D);
 }
 
 //desenha o cubo com faces no sentido anti-horario/externa
@@ -337,7 +341,7 @@ void init(void) {
     GLfloat mat_shininess[ ] = { 1.0, 1.0, 1.0, 1.0 };
     GLfloat light_position[ ] = { 0.0, 25.0, 0.0, 0.0 };
     GLfloat white_light[ ] = { 0.3, 0.3, 0.3, 1.0 };
-    GLfloat diffuse_light[ ] = { 1.0, 0.0, 0.0, 0.0 };
+    GLfloat diffuse_light[ ] = { 1.0, 1.0, 1.0, 1.0 };
     glClearColor (1.0, 1.0, 1.0, 1.0);
     // glMaterialfv(GL_FRONT, GL_AMBIENT, mat_ambient);
     // glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
