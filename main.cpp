@@ -348,8 +348,8 @@ void init(void) {
     // glLightfv(GL_LIGHT1, GL_DIFFUSE, white_light);
     //glLightfv(GL_LIGHT0, GL_SPECULAR, white_light);
 
-    GLfloat light2_position[ ] = {viewer[0], viewer[1], viewer[2], 1.0};
-    GLfloat light2_direction[ ] = {viewVector[0], viewVector[1], viewVector[2], 1.0};
+    GLfloat light2_position[ ] = {(float)viewer[0],(float) viewer[1],(float) viewer[2], 1.0};
+    GLfloat light2_direction[ ] = {(float)viewVector[0],(float) viewVector[1],(float) viewVector[2], 1.0};
     glLightfv(GL_LIGHT2, GL_POSITION, light2_position);
     cerr << light2_position[0] << " " << light2_direction[0] << endl;
     glLightfv(GL_LIGHT2, GL_SPOT_DIRECTION, light2_direction);
@@ -577,8 +577,8 @@ void display(void) {
     glPushMatrix();
 
     GLfloat diffuse_light[ ] = { 1.0, 1.0, 1.0, 1.0 };
-    GLfloat light2_position[ ] = {viewer[0], viewer[1], viewer[2], 1.0};
-    GLfloat light2_direction[ ] = {viewVector[0], viewVector[1], viewVector[2], 1.0};
+    GLfloat light2_position[ ] = {(float)viewer[0],(float) viewer[1],(float) viewer[2], 1.0};
+    GLfloat light2_direction[ ] = {(float)viewVector[0],(float) viewVector[1],(float) viewVector[2], 1.0};
     glLightfv(GL_LIGHT2, GL_POSITION, light2_position);
     // cerr << light2_position[0] << " " << light2_direction[0] << endl;
     glLightfv(GL_LIGHT2, GL_SPOT_DIRECTION, light2_direction);
