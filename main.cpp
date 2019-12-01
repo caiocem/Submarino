@@ -337,7 +337,7 @@ void init(void) {
     GLfloat mat_shininess[ ] = { 1.0, 1.0, 1.0, 1.0 };
     GLfloat light_position[ ] = { 0.0, 25.0, 0.0, 0.0 };
     GLfloat white_light[ ] = { 0.3, 0.3, 0.3, 1.0 };
-    GLfloat red_light[ ] = { 1.0, 0.0, 0.0, 0.0 };
+    GLfloat diffuse_light[ ] = { 1.0, 0.0, 0.0, 0.0 };
     glClearColor (1.0, 1.0, 1.0, 1.0);
     // glMaterialfv(GL_FRONT, GL_AMBIENT, mat_ambient);
     // glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
@@ -357,7 +357,7 @@ void init(void) {
     // glLightf(GL_LIGHT2, GL_CONSTANT_ATTENUATION, 4.0);
     // glLightf(GL_LIGHT2, GL_LINEAR_ATTENUATION, 0.001);
     glLighti(GL_LIGHT2, GL_SPOT_CUTOFF, 30);
-    glLightfv(GL_LIGHT2, GL_DIFFUSE, red_light);
+    glLightfv(GL_LIGHT2, GL_DIFFUSE, diffuse_light);
 
     //8 Texturas
     Image *image1 = loadTexture("Textures/Metal.bmp");
@@ -576,7 +576,7 @@ void display(void) {
 		0.0, 1.0, 0.0);
     glPushMatrix();
 
-    GLfloat red_light[ ] = { 1.0, 1.0, 1.0, 1.0 };
+    GLfloat diffuse_light[ ] = { 1.0, 1.0, 1.0, 1.0 };
     GLfloat light2_position[ ] = {viewer[0], viewer[1], viewer[2], 1.0};
     GLfloat light2_direction[ ] = {viewVector[0], viewVector[1], viewVector[2], 1.0};
     glLightfv(GL_LIGHT2, GL_POSITION, light2_position);
@@ -587,7 +587,7 @@ void display(void) {
     // glLightf(GL_LIGHT2, GL_LINEAR_ATTENUATION, 0.001);
     glLighti(GL_LIGHT2, GL_SPOT_CUTOFF, 30);
     
-    glLightfv(GL_LIGHT2, GL_DIFFUSE, red_light);
+    glLightfv(GL_LIGHT2, GL_DIFFUSE, diffuse_light);
 
     glTranslated(center[0], center[1], center[2]);
 	glRotatef(-1*Rot,0,1,0);  //fazer translacao pra rodar direito
