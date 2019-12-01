@@ -336,7 +336,7 @@ void init(void) {
     GLfloat mat_specular[ ] = { 0.0, 1.0, 1.0, 1.0 };
     GLfloat mat_shininess[ ] = { 1.0, 1.0, 1.0, 1.0 };
     GLfloat light_position[ ] = { 0.0, 25.0, 0.0, 0.0 };
-    GLfloat white_light[ ] = { 1.0, 1.0, 1.0, 0.0 };
+    GLfloat white_light[ ] = { 0.3, 0.3, 0.3, 1.0 };
     GLfloat red_light[ ] = { 1.0, 0.0, 0.0, 0.0 };
     glClearColor (1.0, 1.0, 1.0, 1.0);
     // glMaterialfv(GL_FRONT, GL_AMBIENT, mat_ambient);
@@ -345,8 +345,20 @@ void init(void) {
     // glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
     glLightfv(GL_LIGHT1, GL_POSITION, light_position);
     glLightfv(GL_LIGHT1, GL_AMBIENT, white_light);
-    glLightfv(GL_LIGHT1, GL_DIFFUSE, white_light);
+    // glLightfv(GL_LIGHT1, GL_DIFFUSE, white_light);
     //glLightfv(GL_LIGHT0, GL_SPECULAR, white_light);
+
+    GLfloat light2_position[ ] = {viewer[0], viewer[1], viewer[2], 1.0};
+    GLfloat light2_direction[ ] = {viewVector[0], viewVector[1], viewVector[2], 1.0};
+    glLightfv(GL_LIGHT2, GL_POSITION, light2_position);
+    cerr << light2_position[0] << " " << light2_direction[0] << endl;
+    glLightfv(GL_LIGHT2, GL_SPOT_DIRECTION, light2_direction);
+    glLighti(GL_LIGHT2, GL_SPOT_EXPONENT, 2);
+    // glLightf(GL_LIGHT2, GL_CONSTANT_ATTENUATION, 4.0);
+    // glLightf(GL_LIGHT2, GL_LINEAR_ATTENUATION, 0.001);
+    glLighti(GL_LIGHT2, GL_SPOT_CUTOFF, 30);
+    glLightfv(GL_LIGHT2, GL_DIFFUSE, red_light);
+
     //8 Texturas
     Image *image1 = loadTexture("Textures/Metal.bmp");
     Image *image2 = loadTexture("Textures/Madeira.bmp"); 
@@ -563,6 +575,19 @@ void display(void) {
 		center[0]+2.73*viewVector[0], center[1]+CamY, center[2]+2.73*viewVector[2],                            // ponto de interesse (foco)
 		0.0, 1.0, 0.0);
     glPushMatrix();
+
+    GLfloat red_light[ ] = { 1.0, 1.0, 1.0, 1.0 };
+    GLfloat light2_position[ ] = {viewer[0], viewer[1], viewer[2], 1.0};
+    GLfloat light2_direction[ ] = {viewVector[0], viewVector[1], viewVector[2], 1.0};
+    glLightfv(GL_LIGHT2, GL_POSITION, light2_position);
+    // cerr << light2_position[0] << " " << light2_direction[0] << endl;
+    glLightfv(GL_LIGHT2, GL_SPOT_DIRECTION, light2_direction);
+    glLighti(GL_LIGHT2, GL_SPOT_EXPONENT, 2);
+    // glLightf(GL_LIGHT2, GL_CONSTANT_ATTENUATION, 4.0);
+    // glLightf(GL_LIGHT2, GL_LINEAR_ATTENUATION, 0.001);
+    glLighti(GL_LIGHT2, GL_SPOT_CUTOFF, 30);
+    
+    glLightfv(GL_LIGHT2, GL_DIFFUSE, red_light);
 
     glTranslated(center[0], center[1], center[2]);
 	glRotatef(-1*Rot,0,1,0);  //fazer translacao pra rodar direito
