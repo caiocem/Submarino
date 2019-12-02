@@ -1,8 +1,6 @@
-// 
-// INF390 - CG : Submarino
+ // INF390 - CG : Submarino
 // Caio O H Henrici - 92558
 // Rodrigo E O B Chichorro - 92535
-
 
 #include <GL/glut.h>
 #include <vector>
@@ -66,7 +64,7 @@ GLdouble viewVector[] = {1.0, 0.0, 0.0}; //Vetor unitario que aponta de viewer p
 //Iluminação
 bool Luz,ModoLuz = false; bool Luz1,Luz2 = false;
 //Textura
-GLuint texture[8];
+GLuint texture[6];
 struct Image {
     unsigned long sizeX;
     unsigned long sizeY;
@@ -76,9 +74,8 @@ typedef struct Image Image;
 #define checkImageWidth 64
 #define checkImageHeight 64
 GLubyte checkImage[checkImageWidth][checkImageHeight][3];
+
 bool Parser(const char * nome, int cor, int numTexture) {  
-    //fstream f;
-    //f.open (nome);
     FILE * f = fopen(nome, "r");
     if( f == NULL ){
         printf("Nao da pra abrir\n");
@@ -117,21 +114,15 @@ bool Parser(const char * nome, int cor, int numTexture) {
                 printf("Erro no formato\n");
                 return false;
             }
-            // o q faz com uvIndex[0]uvIndex[1]uvIndex[2] e normalIndex[0]normalIndex[1]normalIndex[2] ???
-            //  if (cor != 0)
-            //  glColor4fv(colors[cor]);
-            //  else
-            //      glColor4f(0.1,0.1,0.1,1);
             glClearColor(1.0, 1.0, 1.0, 1.0);
             glEnable(GL_TEXTURE_2D); //habilitar textura
             glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-            glColor3ub(255, 255, 255);
+            glColor3ub(255, 255, 255); //nao perder a cor do objeto
             if (numTexture == 4) glColor3f(1,0.3,0.0);
             if (numTexture == 1) glColor3f(0.897,0.945,0.587);
-            if(numTexture != 2) {
+            if(numTexture != 2) { //todos os modelos menos areia
                 glColorMaterial(GL_FRONT_AND_BACK,GL_AMBIENT_AND_DIFFUSE);
                 glBindTexture ( GL_TEXTURE_2D, texture[numTexture]);
-                //cerr<<TextureVertices[uvIndex[0]-1][0]<<" "<<TextureVertices[uvIndex[0]-1][1];
                 glBegin(GL_TRIANGLES);
                     glNormal3f (NormalVertices[normalIndex[0]-1][0],NormalVertices[normalIndex[0]-1][1],NormalVertices[normalIndex[0]-1][2]);
                     glTexCoord2f(TextureVertices[uvIndex[0]-1][0],TextureVertices[uvIndex[0]-1][1]);
@@ -143,9 +134,9 @@ bool Parser(const char * nome, int cor, int numTexture) {
                     glTexCoord2f(TextureVertices[uvIndex[2]-1][0],TextureVertices[uvIndex[2]-1][1]);
                     glVertex3f (Vertices[vertexIndex[2]-1][0], Vertices[vertexIndex[2]-1][1], Vertices[vertexIndex[2]-1][2]);
                 glEnd();
-                glDisable(GL_TEXTURE_2D); //habilitar textura
+                glDisable(GL_TEXTURE_2D);
             }
-            else {
+            else { //nao encontrei modelos de areia com textura
                 glColor4fv(colors[cor]);
                 glBegin(GL_TRIANGLES);
                     glNormal3f (NormalVertices[normalIndex[0]-1][0],NormalVertices[normalIndex[0]-1][1],NormalVertices[normalIndex[0]-1][2]);
@@ -175,74 +166,65 @@ void makeCheckImage(void){
 
 int ImageLoad(char *filename, Image *image) {
     FILE *file;
-    unsigned size; // size of the image in bytes.
-    unsigned long i; // standard counter.
-    unsigned short int planes; // number of planes in image (must be 1)
-    unsigned short int bpp; // number of bits per pixel (must be 24)
-    char temp; // temporary color storage for bgr-rgb conversion.
-    // make sure the file is there.
+    unsigned size; // tamanho da imagem em bytes
+    unsigned long i;
+    unsigned short int planes; // numero de planos (1)
+    unsigned short int bpp; // numero bit por pixel (24)
+    char temp; 
+
     if ((file = fopen(filename, "rb"))==NULL){
-        printf("File Not Found : %s\n",filename);
+        printf("Arquivo nao encontrado : %s\n",filename);
         return 0;
     }
-    // seek through the bmp header, up to the width/height:
+    // procura e le altura e largura
     fseek(file, 18, SEEK_CUR);
-    // read the width
+    // largura
     if ((i = fread(&image->sizeX, 4, 1, file)) != 1) {
-        printf("Error reading width from %s.\n", filename);
+        printf("Erro na leitura da largura em %s.\n", filename);
         return 0;
     }
-    //printf("Width of %s: %lu\n", filename, image->sizeX);
-    // read the height
+    // altura
     if ((i = fread(&image->sizeY, 4, 1, file)) != 1) {
-        printf("Error reading height from %s.\n", filename);
+        printf("Erro na leitura da altura em %s.\n", filename);
         return 0;
     }
-    //printf("Height of %s: %lu\n", filename, image->sizeY);
-    // calculate the size (assuming 24 bits or 3 bytes per pixel).
+    // calculo do tamanho da imagem
     size = image->sizeX * image->sizeY * 3;
-    // read the planes
+    // planos
     if ((fread(&planes, 2, 1, file)) != 1) {
-        printf("Error reading planes from %s.\n", filename);
+        printf("Erro na leitura dos plano em %s.\n", filename);
         return 0;
     }
     if (planes != 1) {
-        printf("Planes from %s is not 1: %u\n", filename, planes);
+        printf("Planos de %s nao eh 1: %u\n", filename, planes);
         return 0;
     }
-    // read the bitsperpixel
+    // bits por pixel
     if ((i = fread(&bpp, 2, 1, file)) != 1) {
-        printf("Error reading bpp from %s.\n", filename);
+        printf("Erro na leitura do bpp no %s.\n", filename);
         return 0;
     }
     if (bpp != 24) {
-        printf("Bpp from %s is not 24: %u\n", filename, bpp);
+        printf("Bpp de %s nao eh 24: %u\n", filename, bpp);
         return 0;
     }
-    // seek past the rest of the bitmap header.
     fseek(file, 24, SEEK_CUR);
 
-    // read the data.
+    // imagem em si
     image->data = (char *) malloc(size);
     if (image->data == NULL) {
-        printf("Error allocating memory for color-corrected image data");
+        printf("Erro na alocacao de memoria");
         return 0;
     }
     if ((i = fread(image->data, size, 1, file)) != 1) {
-        printf("Error reading image data from %s.\n", filename);
+        printf("Erro na leitura da imagem em %s.\n", filename);
         return 0;
     }
-    // for (i=0;i<size;i+=3) { // reverse all of the colors. (bgr -> rgb)
-    //     temp = image->data[i];
-    //     image->data[i] = image->data[i+2];
-    //     image->data[i+2] = temp;
-    // }
-    // we're done.
     return 1;
 }
 Image * loadTexture(char *file_name){
     Image *image_aux;
-    // allocate space for texture
+    // alocação da textura
     image_aux = (Image *) malloc(sizeof(Image));
     if (image_aux == NULL) {
         printf("Error allocating space for image");
@@ -256,7 +238,11 @@ Image * loadTexture(char *file_name){
 
 void texto(string s,float x,float y,float z) //func de texto usando bitmap
 { 
-  glColor3f(1.0,0.0,0.0);   //cor vermelha para contrastar com o resto
+  if (Luz) { //cor do texto conitunuar vermelha após ligar a luz
+    glColorMaterial(GL_FRONT_AND_BACK,GL_AMBIENT_AND_DIFFUSE);  
+    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+    glColor3ub(255, 255, 255);} 
+    glColor3f(2.0,0.0,0.0);   //cor vermelha para contrastar com o resto
   glRasterPos3f( x, y , z);
   void * font = GLUT_BITMAP_9_BY_15;
 	for (string::iterator i = s.begin(); i != s.end(); ++i)
@@ -268,16 +254,19 @@ void texto(string s,float x,float y,float z) //func de texto usando bitmap
 
 void desenha_menu () {
     double d = 13.0*viewVector[2]/3.73, e = -13.0*viewVector[0]/3.73;
-	texto("                    Menu de Comandos                   "                 , center[0] + 3.73*viewVector[0] + d, 4.7 + center[1], center[2] + 3.73*viewVector[2] + e);
-	texto("Up (tecla direcional)     | Mover (verticalmente) para cima "            , center[0] + 3.73*viewVector[0] + d, 4.4 + center[1], center[2] + 3.73*viewVector[2] + e);
-	texto("Down (tecla direcional)   | Mover (verticalmente) para baixo"            , center[0] + 3.73*viewVector[0] + d, 4.1 + center[1], center[2] + 3.73*viewVector[2] + e);
-    texto("Left (tecla direcional)   | Virar (aproximadamente) 5o para a direita"   , center[0] + 3.73*viewVector[0] + d, 3.8 + center[1], center[2] + 3.73*viewVector[2] + e);
-    texto("Right (tecla direcional)  | Virar (aproximadamente) 5o para a esquerda"  , center[0] + 3.73*viewVector[0] + d, 3.5 + center[1], center[2] + 3.73*viewVector[2] + e);
-    texto("W ou w                    | Ir para a frente"                            , center[0] + 3.73*viewVector[0] + d, 3.2 + center[1], center[2] + 3.73*viewVector[2] + e);
-	texto("S ou s                    | Re"                                          , center[0] + 3.73*viewVector[0] + d, 2.9 + center[1], center[2] + 3.73*viewVector[2] + e);
-	texto("F ou f                    | Ponto de vista de fora do submarino"         , center[0] + 3.73*viewVector[0] + d, 2.6 + center[1], center[2] + 3.73*viewVector[2] + e);
-	texto("I ou i                    | Ponto de vista de dentro do submarino"       , center[0] + 3.73*viewVector[0] + d, 2.3 + center[1], center[2] + 3.73*viewVector[2] + e);
-	texto("H ou h                    | Apresentar/Ocultar um menu de ajuda"         , center[0] + 3.73*viewVector[0] + d, 2.0 + center[1], center[2] + 3.73*viewVector[2] + e); 
+	texto("                    Menu de Comandos                   "                 , center[0] + 3.73*viewVector[0] + d, 5.3 + center[1], center[2] + 3.73*viewVector[2] + e);
+	texto("Up (tecla direcional)     | Mover (verticalmente) para cima "            , center[0] + 3.73*viewVector[0] + d, 5.0 + center[1], center[2] + 3.73*viewVector[2] + e);
+	texto("Down (tecla direcional)   | Mover (verticalmente) para baixo"            , center[0] + 3.73*viewVector[0] + d, 4.7 + center[1], center[2] + 3.73*viewVector[2] + e);
+    texto("Left (tecla direcional)   | Virar (aproximadamente) 5o para a direita"   , center[0] + 3.73*viewVector[0] + d, 4.4 + center[1], center[2] + 3.73*viewVector[2] + e);
+    texto("Right (tecla direcional)  | Virar (aproximadamente) 5o para a esquerda"  , center[0] + 3.73*viewVector[0] + d, 4.1 + center[1], center[2] + 3.73*viewVector[2] + e);
+    texto("W ou w                    | Ir para a frente"                            , center[0] + 3.73*viewVector[0] + d, 3.8 + center[1], center[2] + 3.73*viewVector[2] + e);
+	texto("S ou s                    | Re"                                          , center[0] + 3.73*viewVector[0] + d, 3.5 + center[1], center[2] + 3.73*viewVector[2] + e);
+	texto("F ou f                    | Ponto de vista de fora do submarino"         , center[0] + 3.73*viewVector[0] + d, 3.2 + center[1], center[2] + 3.73*viewVector[2] + e);
+	texto("I ou i                    | Ponto de vista de dentro do submarino"       , center[0] + 3.73*viewVector[0] + d, 2.9 + center[1], center[2] + 3.73*viewVector[2] + e);
+	texto("H ou h                    | Apresentar/Ocultar um menu de ajuda"         , center[0] + 3.73*viewVector[0] + d, 2.6 + center[1], center[2] + 3.73*viewVector[2] + e); 
+    texto("L ou l                    | habilitar/desabilitar a iluminação"          , center[0] + 3.73*viewVector[0] + d, 2.3 + center[1], center[2] + 3.73*viewVector[2] + e); 
+    texto("G ou g                    | alternar entre Flat e Gouraud shading"       , center[0] + 3.73*viewVector[0] + d, 2.0 + center[1], center[2] + 3.73*viewVector[2] + e);
+    texto("1 e 2                     | ativar a luz multidirecional e spot-light"    , center[0] + 3.73*viewVector[0] + d, 1.7 + center[1], center[2] + 3.73*viewVector[2] + e); 
 }
 
 void desenha_menu2 () {  
@@ -291,7 +280,10 @@ void desenha_menu2 () {
 	texto("S ou s                    | Re"                                          , center[0] + 3.73*viewVector[0] + d, 1.4 + center[1], center[2] + 3.73*viewVector[2] + e);
 	texto("F ou f                    | Ponto de vista de fora do submarino"         , center[0] + 3.73*viewVector[0] + d, 1.3 + center[1], center[2] + 3.73*viewVector[2] + e);
 	texto("I ou i                    | Ponto de vista de dentro do submarino"       , center[0] + 3.73*viewVector[0] + d, 1.2 + center[1], center[2] + 3.73*viewVector[2] + e);
-	texto("H ou h                    | Apresentar/Ocultar um menu de ajuda"         , center[0] + 3.73*viewVector[0] + d, 1.1 + center[1], center[2] + 3.73*viewVector[2] + e); 
+	texto("H ou h                    | Apresentar/Ocultar um menu de ajuda"         , center[0] + 3.73*viewVector[0] + d, 1.1 + center[1], center[2] + 3.73*viewVector[2] + e);
+    texto("L ou l                    | habilitar/desabilitar a iluminação"          , center[0] + 3.73*viewVector[0] + d, 1.0 + center[1], center[2] + 3.73*viewVector[2] + e); 
+    texto("G ou g                    | alternar entre Flat e Gouraud shading"       , center[0] + 3.73*viewVector[0] + d, 0.9 + center[1], center[2] + 3.73*viewVector[2] + e);
+    texto("1 e 2                     | ativar a luz multidirecional e spot-light"    , center[0] + 3.73*viewVector[0] + d, 0.8 + center[1], center[2] + 3.73*viewVector[2] + e); 
 }
 
 void quad(int a, int b, int c, int d, int ncolor) {
@@ -302,7 +294,6 @@ void quad(int a, int b, int c, int d, int ncolor) {
         glColorMaterial(GL_FRONT_AND_BACK,GL_AMBIENT);
         glBindTexture(GL_TEXTURE_2D, texture[5]);
     }
-    // 1 2 6 5  {-1.0,1.0,1.0} {1.0,1.0,1.0} {1.0,1.0,-1.0} {-1.0,1.0,-1.0}
     glBegin(GL_QUADS);
         if(ncolor==7)
             glTexCoord2f(0.0f, 0.0f);
@@ -338,8 +329,6 @@ void colorcube() {
     glPopMatrix();
 }
 
-
-// gluPerspective(viewAngle, aspectRatio, near, far) -> projecao perspectiva
 void init(void) {
     glClearColor(1.0, 1.0, 1.0, 1.0); // cor para limpeza do buffer
     glMatrixMode(GL_PROJECTION);
@@ -354,27 +343,18 @@ void init(void) {
     GLfloat white_light[ ] = { 0.3, 0.3, 0.3, 1.0 };
     GLfloat diffuse_light[ ] = { 1.0, 1.0, 1.0, 1.0 };
     glClearColor (1.0, 1.0, 1.0, 1.0);
-    // glMaterialfv(GL_FRONT, GL_AMBIENT, mat_ambient);
-    // glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
-    // glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
-    // glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
-    glLightfv(GL_LIGHT1, GL_POSITION, light_position);
+    glLightfv(GL_LIGHT1, GL_POSITION, light_position); //Luz ambiente
     glLightfv(GL_LIGHT1, GL_AMBIENT, white_light);
-    // glLightfv(GL_LIGHT1, GL_DIFFUSE, white_light);
-    //glLightfv(GL_LIGHT0, GL_SPECULAR, white_light);
 
     GLfloat light2_position[ ] = {(float)viewer[0],(float) viewer[1],(float) viewer[2], 1.0};
     GLfloat light2_direction[ ] = {(float)viewVector[0],(float) viewVector[1],(float) viewVector[2], 1.0};
-    glLightfv(GL_LIGHT2, GL_POSITION, light2_position);
-    cerr << light2_position[0] << " " << light2_direction[0] << endl;
+    glLightfv(GL_LIGHT2, GL_POSITION, light2_position);       //Luz direcional
     glLightfv(GL_LIGHT2, GL_SPOT_DIRECTION, light2_direction);
     glLighti(GL_LIGHT2, GL_SPOT_EXPONENT, 2);
-    // glLightf(GL_LIGHT2, GL_CONSTANT_ATTENUATION, 4.0);
-    // glLightf(GL_LIGHT2, GL_LINEAR_ATTENUATION, 0.001);
     glLighti(GL_LIGHT2, GL_SPOT_CUTOFF, 30);
     glLightfv(GL_LIGHT2, GL_DIFFUSE, diffuse_light);
 
-    //8 Texturas
+    //6 Texturas
     Image *image1 = loadTexture("Textures/Metal.bmp");
     Image *image2 = loadTexture("Textures/Madeira.bmp"); 
     Image *image3 = loadTexture("Textures/Areia.bmp"); 
@@ -388,51 +368,52 @@ void init(void) {
     makeCheckImage();
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
-    // Create Texture
+    //Declaracao das texturas
     //Primeira Textura - Metal
-    glGenTextures(8, texture);
-    glBindTexture(GL_TEXTURE_2D, texture[0]);
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR); //scale linearly when image bigger than texture
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR); //scale linearly when image smalled than texture
+    glGenTextures(6, texture);
+    glBindTexture(GL_TEXTURE_2D, texture[0]); //cadeamento da textura
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR); //caso imagem maior
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR); //caso imagem menor
     glTexImage2D(GL_TEXTURE_2D, 0, 3, image1->sizeX, image1->sizeY, 0,
                  GL_RGB, GL_UNSIGNED_BYTE, image1->data);
     glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
  
     //Segunda textura - Madeira
-    glBindTexture(GL_TEXTURE_2D, texture[1]);
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR); //scale linearly when image bigger than texture
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR); //scale linearly when image smalled than texture
+    glBindTexture(GL_TEXTURE_2D, texture[1]); //cadeamento da textura
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR); //caso imagem maior
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR); //caso imagem menor
     glTexImage2D(GL_TEXTURE_2D, 0, 3, image2->sizeX, image2->sizeY, 0,
                  GL_RGB, GL_UNSIGNED_BYTE, image2->data);
     glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_BLEND);
     
     //Terceira textura - Areia
-    glBindTexture(GL_TEXTURE_2D, texture[2]);
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR); //scale linearly when image bigger than texture
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR); //scale linearly when image smalled than texture
+    glBindTexture(GL_TEXTURE_2D, texture[2]); //cadeamento da textura
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR); //caso imagem maior
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR); //caso imagem menor
     glTexImage2D(GL_TEXTURE_2D, 0, 3, image3->sizeX, image3->sizeY, 0,
                  GL_RGB, GL_UNSIGNED_BYTE, image3->data);
     glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
 
     //Quarta textura - Escamas
-    glBindTexture(GL_TEXTURE_2D, texture[3]);
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR); //scale linearly when image bigger than texture
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR); //scale linearly when image smalled than texture
+    glBindTexture(GL_TEXTURE_2D, texture[3]); //cadeamento da textura
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR); //caso imagem maior
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR); //caso imagem menor
     glTexImage2D(GL_TEXTURE_2D, 0, 3, image4->sizeX, image4->sizeY, 0,
                  GL_RGB, GL_UNSIGNED_BYTE, image4->data);
     glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
 
     //Quinta textura - Abacaxi
-    glBindTexture(GL_TEXTURE_2D, texture[4]);
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR); //scale linearly when image bigger than texture
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR); //scale linearly when image smalled than texture
+    glBindTexture(GL_TEXTURE_2D, texture[4]); //cadeamento da textura
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR); //caso imagem maior
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR); //caso imagem menor
     glTexImage2D(GL_TEXTURE_2D, 0, 3, image5->sizeX, image5->sizeY, 0,
                  GL_RGB, GL_UNSIGNED_BYTE, image5->data);
     glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
 
     //Sexta textura - Mar
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR); //scale linearly when image bigger than texture
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR); //scale linearly when image smalled than texture
+    glBindTexture(GL_TEXTURE_2D, texture[5]); //cadeamento da textura
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR); //caso imagem maior
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR); //caso imagem menor
     glTexImage2D(GL_TEXTURE_2D, 0, 3, image6->sizeX, image6->sizeY, 0,
                 GL_RGB, GL_UNSIGNED_BYTE, image6->data);
     glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
@@ -536,48 +517,11 @@ void Temporizador (int tempo) { //funcao para dar mais fluides aos movimentos, i
         animaCardumeAux = !animaCardumeAux; 
         inverteCardume = !inverteCardume;
     }
-    /*Suavisacao da transicao da camera
-    if (POV == 0 && CamX<abs((radius+2.23)*viewVector[0]) && trocaCam){
-		if (viewVector[2] < 0)
-            CamX-=0.01;else CamX+=0.01; } */
+    /*Suavisacao da transicao da camera*/
 	if (POV == 0 && CamY<1.5 && trocaCam){
-		CamY+=0.05;} /*
-    if (POV == 0 && CamZ<abs((radius+2.23)*viewVector[2]) && trocaCam){
-		if (viewVector[2] < 0)
-            CamZ-=0.01; else CamZ+=0.01; }
-    if (POV == 0 && FocoX<abs(2.73*viewVector[0]) && trocaCam){
-		if (viewVector[0] < 0)
-            FocoX-=0.01;else FocoX+=0.01;}
-    if (POV == 0 && FocoY<0.5 && trocaCam){
-		FocoY+=0.01;}
-    if (POV == 0 && FocoZ<abs(2.73*viewVector[2]) && trocaCam){
-		if (viewVector[2] < 0)
-            FocoZ-=0.01; else FocoZ+=0.01;}
-	if (POV == 1 && CamX>0 && !trocaCam && initCam){
-		if (CamX<0)
-            CamX+=0.01;else if(CamX>0)CamX-=0.01; } */
-	if (POV == 1 && CamY>1 && !trocaCam && initCam){
-		CamY-=0.05; } /*
-    if (POV == 1 && abs(CamZ)>0 && !trocaCam && initCam){
-		if (CamZ<0)
-            CamZ+=0.01;else if(CamZ>0) CamZ-=0.01; }
-	if (POV == 1 && abs(FocoX)>0 && !trocaCam && initCam){
-		if(FocoX<0)
-            FocoX+=0.01;else if(FocoX>0)FocoX-=0.01;}
-	if (POV == 1 && FocoY>0 && !trocaCam && initCam){
-		FocoY-=0.01;}
-    if (POV == 1 && abs(FocoZ)>0 && !trocaCam && initCam){
-		if(FocoZ<0)
-            FocoZ+=0.01;else if(FocoZ>0)FocoZ-=0.01;}
-    */
+		CamY+=0.05;} 
 	glutPostRedisplay();
 	glutTimerFunc(1,Temporizador,0);
-
-    // cerr para debug, caso seja necessario analisar os valores das variaveis durante a execucao
-    // if(a) {
-        //cerr << center[0] << "," << center[1] << "," << center[2] << " = " << viewer[0] << "," << viewer[1] << "," << viewer[2] << " = " << viewVector[0] << "," << viewVector[1] << "," << viewVector[2] << " " << Rot << endl;
-        // a=0;
-    // }
 }
 
 void display(void) {
@@ -586,9 +530,6 @@ void display(void) {
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //limpa a janela
     glLoadIdentity();
-    //versao suave  { gluLookAt(CamX+viewer[0],CamY+viewer[1],CamZ+viewer[2], // define posicao do observador
-	//FocoX+center[0], FocoY+center[1]+1, FocoZ+center[2],                                   // ponto de interesse (foco)
-	//0.0, 1.0, 0.0);} 
     if (POV) //POV outside  
         gluLookAt(viewer[0],viewer[1]+CamY, viewer[2], // define posicao do observador
 		center[0], center[1], center[2],               // ponto de interesse (foco)
@@ -602,12 +543,9 @@ void display(void) {
     GLfloat diffuse_light[ ] = { 1.0, 1.0, 1.0, 1.0 };
     GLfloat light2_position[ ] = {(float)viewer[0],(float) viewer[1],(float) viewer[2], 1.0};
     GLfloat light2_direction[ ] = {(float)viewVector[0],(float) viewVector[1],(float) viewVector[2], 1.0};
-    glLightfv(GL_LIGHT2, GL_POSITION, light2_position);
-    // cerr << light2_position[0] << " " << light2_direction[0] << endl;
+    glLightfv(GL_LIGHT2, GL_POSITION, light2_position);       //Luz spotlight
     glLightfv(GL_LIGHT2, GL_SPOT_DIRECTION, light2_direction);
     glLighti(GL_LIGHT2, GL_SPOT_EXPONENT, 2);
-    // glLightf(GL_LIGHT2, GL_CONSTANT_ATTENUATION, 4.0);
-    // glLightf(GL_LIGHT2, GL_LINEAR_ATTENUATION, 0.001);
     glLighti(GL_LIGHT2, GL_SPOT_CUTOFF, 30);
     
     glLightfv(GL_LIGHT2, GL_DIFFUSE, diffuse_light);
@@ -671,19 +609,6 @@ void display(void) {
     Parser("models/jetski2.obj",5,0); //cinza
     glPopMatrix();
     
-//     // Funcao extra, nao finalizada
-//   /*  if (torpedo) { 
-//         glPushMatrix();{
-//             double posTorpedo[3] = {center[0],center[1],center[2]};
-//             //glTranslatef(0,PosY_torp,PosX_torp);
-//             // for(int i=0;)
-//             glTranslatef(animaTorpedo*viewVector[0], 0, animaTorpedo*viewVector[2]);
-//         }
-//         Parser("models/torpedo.obj",0); //cinza
-//         glPopMatrix();
-//     }
-// 	*/
-    
     colorcube(); //desenha o cubo
     if(showmenu && POV==1)         //caso 'h' seja pressionado chama o menu do ponto de vista atua
 		desenha_menu();
@@ -715,7 +640,6 @@ void Upkeyboard(unsigned char key, int x, int y) {
 
 		case '1':  Luz1 = !Luz1; if(Luz1) glEnable(GL_LIGHT1); else glDisable(GL_LIGHT1); break;
         case '2':  Luz2 = !Luz2; if(Luz2) glEnable(GL_LIGHT2); else glDisable(GL_LIGHT2); break;
-        //case 'h': showmenu = !showmenu; break; menu nao aplica manter pressionado
 	}
 }
 
@@ -731,7 +655,6 @@ void UpSpecialKeys(int key, int x, int y)    //soltar os direcionais para o movi
 
 	case GLUT_KEY_RIGHT: dir = false;break;
   }
-  //glutPostRedisplay();
 }
 
 void SpecialKeys(int key, int x, int y) //callback das setas
